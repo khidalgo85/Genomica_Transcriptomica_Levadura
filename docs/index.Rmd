@@ -301,7 +301,7 @@ class: center, middle, inverse
 
 
 
-[Tutorial](https://github.com/khidalgo85/Unix)
+[Tutorial](https://github.com/khidalgo85/Unix#readme)
 ---
 
 ## Práctica II
@@ -315,7 +315,7 @@ class: center, middle, inverse
 * *Trimming*
 
 
-[Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura)
+[Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura#readme)
 ---
 class: center, middle, inverse
 
@@ -533,7 +533,7 @@ class: center, middle, inverse
 .center[
 <img src="imgs/montaje.png" width=90%>
 ]
-[Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura)
+[Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura#readme)
 ]
 
 ---
@@ -610,7 +610,7 @@ class: center, middle, inverse
 * Anotación de genes: Blast2Go, EggNog, UniprotK, Blast
 * Análisis de vías metabólicas: KAAS, KeggMapper, BlastKoala
 
-[Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura)
+[Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura#readme)
 ---
 
 class: center, middle, inverse
@@ -683,7 +683,7 @@ class: center, middle, inverse
 * Expresión diferencial **Cuffdiff**
 * Anotación: Blast2Go, KEGG, EGGNOG
 
-[Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura)
+[Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura#readme)
 ---
 ## Consideraciones finales
 
