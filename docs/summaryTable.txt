@@ -1,0 +1,2 @@
+SMRTcell	numReadsSubread	numReadsLongestSub	totalBasesSubread	totalBasesLongestSub	meanReadLenSubread	meanReadLenLongestSub	medianReadLenSubread	medianReadLenLongestSub	n50Subread	n50LongestSub	l50Subread	l50LongestSub	PSR	ZOR
+m54229_191221_175250	631994	382979	9142012343	5706466929	14465	14900	14443	14134	18964	20556	172338	97913	0.624	0.606
