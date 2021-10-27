@@ -640,12 +640,12 @@ class: hide_logo
 ### Etapas
 
 * Análisis de la calidad de las secuencias (**FastQC**, PrinSEQ, **Trimmomatic**, Trimgalore)
-* Alineamiento de los *reads* en el genoma montado y anotado (STAR, Hisat2, **TopHat2**, Cufflinks)
+* Alineamiento de los *reads* en el genoma montado y anotado (STAR, **HISAT2**, TopHat2, Cufflinks)
 * Control de calidad RNA-seq (**RNA-SeqC**, **RSeqQC**, **Qualimap2**)
-* Ensamblaje del Transcriptoma (Cufflinks)
-* Cuantificación de la expresión (featureCounts, **Cuffquant**, HTSeq-count, **Cufflinks**)
-* Expresión diferencial (**DESeq2**, edgeR, **Cuffdiff**, Ballgown)
-* Anotación: Blast2Go, KEGG, EGGNOG
+* Ensamblaje del Transcriptoma (**StringTie**, Trinity, Cufflinks)
+* Cuantificación de la expresión (featureCounts, Cuffquant, HTSeq-count, **Kallisto**)
+* Expresión diferencial (DESeq2, edgeR, **Sleuth**, Ballgown)
+* Anotación: **Pannzer2**, **TopGo**, **EggNOG**.
 
 ---
 class: hide_logo
@@ -676,7 +676,7 @@ class: center, middle, inverse
 **Contenido**
 
 * Control de Calidad de las secuencias RNA-seq: FastQC, Trimmomatic
-* Alineamiento: TopHat2, SamTools
+* Alineamiento: HISAT2
 * Control de calidad RNA-seq: RNA-SeqC, RSeqQC, Qualimap2
 * Ensamblaje: Cufflinks
 * Cuantificación de la expresión: Cuffquant, Cufflinks

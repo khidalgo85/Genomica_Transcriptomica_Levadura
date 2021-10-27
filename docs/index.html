@@ -4,9 +4,9 @@
     <title>Colaboración Científica CIBAS/UDES - GEMM/UNICAMP</title>
     <meta charset="utf-8" />
     <meta name="author" content="Kelly Hidalgo" />
-    <meta name="date" content="2021-10-26" />
+    <meta name="date" content="2021-10-27" />
     <script src="index_files/header-attrs-2.9/header-attrs.js"></script>
-    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"x3b16987f1cf453b9812d89f16402234","expires":1}</script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"a6fc6e20547f41aaa72303168764d1e0","expires":1}</script>
     <script src="index_files/himalaya-1.1.0/himalaya.js"></script>
     <script src="index_files/js-cookie-3.0.0/js.cookie.js"></script>
     <link href="index_files/editable-0.2.6/editable.css" rel="stylesheet" />
@@ -36,7 +36,7 @@ class: center, middle, inverse, title-slide
 ## Pasantía en Bioinformática - Genómica de Levaduras
 ### Kelly Hidalgo
 ### Grupo de Ecologia Microbiana e Multi-ômicas
-### 2021-10-26
+### 2021-10-27
 
 ---
 
@@ -652,12 +652,12 @@ class: hide_logo
 ### Etapas
 
 * Análisis de la calidad de las secuencias (**FastQC**, PrinSEQ, **Trimmomatic**, Trimgalore)
-* Alineamiento de los *reads* en el genoma montado y anotado (STAR, Hisat2, **TopHat2**, Cufflinks)
+* Alineamiento de los *reads* en el genoma montado y anotado (STAR, **HISAT2**, TopHat2, Cufflinks)
 * Control de calidad RNA-seq (**RNA-SeqC**, **RSeqQC**, **Qualimap2**)
-* Ensamblaje del Transcriptoma (Cufflinks)
-* Cuantificación de la expresión (featureCounts, **Cuffquant**, HTSeq-count, **Cufflinks**)
-* Expresión diferencial (**DESeq2**, edgeR, **Cuffdiff**, Ballgown)
-* Anotación: Blast2Go, KEGG, EGGNOG
+* Ensamblaje del Transcriptoma (**StringTie**, Trinity, Cufflinks)
+* Cuantificación de la expresión (featureCounts, Cuffquant, HTSeq-count, **Kallisto**)
+* Expresión diferencial (DESeq2, edgeR, **Sleuth**, Ballgown)
+* Anotación: **Pannzer2**, **TopGo**, **EggNOG**.
 
 ---
 class: hide_logo
@@ -688,7 +688,7 @@ class: center, middle, inverse
 **Contenido**
 
 * Control de Calidad de las secuencias RNA-seq: FastQC, Trimmomatic
-* Alineamiento: TopHat2, SamTools
+* Alineamiento: HISAT2
 * Control de calidad RNA-seq: RNA-SeqC, RSeqQC, Qualimap2
 * Ensamblaje: Cufflinks
 * Cuantificación de la expresión: Cuffquant, Cufflinks
