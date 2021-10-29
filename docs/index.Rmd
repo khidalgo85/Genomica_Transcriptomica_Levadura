@@ -124,34 +124,48 @@ class: center, middle, inverse
 
 ---
 
-## Grupo de Ecologia Microbiana e Multi-ômicas - GEMM
+### Grupo de Ecologia Microbiana e Multi-ômicas - GEMM
 
 GEMM es un grupo de investigación de la Universidade Estadual de Campínas, liderado por la **Doctora Valéria Maia Merzel**. Sus laboratorios están localizados dentro del Centro Pluridisciplinar de Pesquisas Químicas, Biológicas e Agrícolas - CPQBA y hace parte de la división de recursos microbianos - DRM. 
 
-Nuestras principales líneas de investigación son:
+.center[<img src="imgs/Val.jpeg" width=15%>]
 
-* Ecologia Microbiana Molecular
-* Bioprospección genómica
-* Microbiología Ambiental.
+<font size=3>Nuestras principales líneas de investigación son:</font>
 
+* <font size=3>Ecologia Microbiana Molecular</font>
+* <font size=3>Bioprospección genómica</font>
+* <font size=3>Microbiología Ambiental</font>
+
+<font size=3>
 Nuestros principales intereses incluyen la compresión de la composición y el funcionamiento de las comunidades microbianas y de sus interacciones a travez del uso de abordajes multi-ómicas, con foco en ambientes asociados a petróleo y ambientes extremos como la Antártica.
+</font>
 
 ---
 
 ## Grupo de Ecologia Microbiana e Multi-ômicas - GEMM
 
-Integrantes:
 
 **Alumnos de maestría**
-* 🇨🇴 **Alejandra Calderón Fajardo:** Microbióloga de la Universidad de Pamplona⛽
+
+<img src="imgs/ale.jpeg" width=10%> 🇨🇴<font size=2.5>**Alejandra Calderón Fajardo:** Microbióloga de la Universidad de Pamplona</font>⛽
 
 ** Alumnos de doctorado**
-* 🇵🇪 **MsC. Melissa Santa Cruz:** Bióloga de la Universidad de Trujillo - Perú 🥶
-* 🇧🇷 **MsC. Jéssica Silva:** Bióloga de la Pontificia Universidade Católica de Campinas ⛽ 🥶
-* 🇨🇴 **MsC. Mavi Blanco:** Biólogo de la Universidad Industrial de Santander  🥶
-* 🇧🇷 **Victor Borin Centurion:** Biomédico de la Universidade Paulista 🥶 
-* 🇧🇷 **MsC. William Medeiros:** Biológo de la Universidade Federal da Integração Latino-Americana -UNILA 🥶
-* 🇨🇴 **MsC. Kelly Hidalgo:** Microbióloga Industrial de la Pontificia Universidad Javeriana ⛽ 🥶
+
+
+<img src="imgs/meli.jpeg" width=10%> 🇵🇪 <font size=2.5>**MsC. Melissa Santa Cruz:** Bióloga de la Universidad de Trujillo - Perú </font> 🥶
+
+<img src="imgs/jessica.jpeg" width=10%> 🇧🇷 <font size=2.5>**MsC. Jéssica Silva:** Bióloga de la Pontificia Universidade Católica de Campinas </font>⛽ 🥶
+
+---
+
+** Alumnos de doctorado**
+
+<img src="imgs/mavi.jpeg" width=10%> 🇨🇴 <font size=2.5> **MsC. Mavi Blanco:** Biólogo de la Universidad Industrial de Santander </font> 🥶
+
+<img src="imgs/victor.jpeg" width=10%> 🇧🇷 <font size=2.5> **Victor Borin Centurion:** Biomédico de la Universidade Paulista </font> 🥶 
+
+<img src="imgs/will.jpeg" width=10%>🇧🇷 <font size=2.5>**MsC. William Medeiros:** Biológo de la Universidade Federal da Integração Latino-Americana -UNILA</font> 🥶
+<img src="imgs/kelly.jpg" width=10%>🇨🇴 <font size=2.5>**MsC. Kelly Hidalgo:** Microbióloga Industrial de la Pontificia Universidad Javeriana</font> ⛽ 
 
 ---
 class: center, middle, inverse
