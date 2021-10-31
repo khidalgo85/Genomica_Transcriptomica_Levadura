@@ -45,10 +45,10 @@ tutorial también serán presentadas
 
 Como ya fue explicado anteriorimente, con conda es posible crear
 ambientes virutuales para instalar las herramientas bioinformáticas. El
-primer ambiente que será creado se llamará **QualityControl**, donde se
+primer ambiente que será creado se llamará **quality**, donde se
 instalaran los programas relacionados con este proceso.
 
-    conda create -n QualityControl
+    conda create -n quality
 
 Durante el proceso, el sistema preguntará sí desea proceder con la
 creación del ambiente, con las opciones y/n (si o no). Escriba `y` y
@@ -57,11 +57,10 @@ después de eso el ambiente virtual estará creado.
 Para instalar las herramientas dentro del ambiente anteriormente creado,
 es necesario activarlo
 
-    conda activate QualityControl
+    conda activate quality
 
 El ambiente estará activo cuando el nombre de éste se encuentra en el
-comienzo de la linea de comando, así:
-`(QualityControl) user@server:~/$`.
+comienzo de la linea de comando, así: `(quality) user@server:~/$`.
 
 Posteriormente se procede a la instalación del programa:
 
@@ -78,10 +77,10 @@ calidad.
 
 Como se trata de una herramienta que participa dentro del proceso de
 control de calidad, será instalada dentro del ambiente virtual
-**QualityControl**
+**quality**
 
     # Si no está activado el ambiente
-    conda activate QualityControl
+    conda activate quality
 
     # Instale Trimmomatic
     conda install -c bioconda trimmomatic
@@ -99,24 +98,24 @@ largas.
 
 SequelTools no está dentro de conda, por lo que será instalado de manera
 diferente. Sin embargo, primero va a ser creado un ambiente virtual
-llamado *PacBioTools*, donde se instalarán herramientas relacionadas con
-la manipulación de secuencias de PacBio. SequelTools necesita algunas
+llamado *mapping*, donde se instalarán herramientas relacionadas con la
+manipulación de secuencias de PacBio. SequelTools necesita algunas
 dependencias para funcionar, com *SamTools*, *Python* y *R*. Para
 usuarios de Linux, no es necesario instalar *Python* ni *R* pues vienen
 pre instaladas. *SamTools* será instalado dentro del ambiente virtual
-*PacBioTools*.
+*mapping*.
 
     # Crea el ambiente 
-    conda create -n PacBioTools
+    conda create -n mapping
 
     # Activa el ambiente
-    conda activate PacBioTools
+    conda activate mapping
 
     # Instala SamTools
     conda install -c bioconda samtools
 
 A continuación los comandos para la instalacion *SequelTools* dentro do
-ambiente *PacBioTools*
+ambiente *mapping*
 
     git clone https://github.com/ISUgenomics/SequelTools.git
     cd SequelTools/Scripts
@@ -156,19 +155,19 @@ restante. La fase de ensamblaje ordenará las lecturas en contigs,
 generará secuencias de consenso y creará gráficos de rutas alternativas.
 
 Para la instalación de Canu, primero será creado um ambiente virutal
-llamado *Assembly*, dentro del cual serán instaladas las herramientas
+llamado *assembly*, dentro del cual serán instaladas las herramientas
 relacionadas con el ensamblaje de genomas.
 
 Siga las siguientes instrucciones para la creación del ambiente virtual
 y posterior instalación de **Canu**
 
     # Cree el ambiente virtual
-    conda create -n Assembly
+    conda create -n assembly
 
     # Active el ambiente virtual
-    conda activate Assembly
+    conda activate assembly
 
-    # Instale Spades
+    # Instale Canu
     conda install -c bioconda canu
 
 **7. Instalación Spades v3.15.3**
@@ -177,26 +176,26 @@ y posterior instalación de **Canu**
 que puede ser usado tanto para lecturas cortas como largas.
 
 Siga las siguientes instrucciones para la instalación de **Spades**
-dentro do ambiente virtual *Assmebly*.
+dentro do ambiente virtual *assmebly*.
 
     # Active el ambiente virtual
-    conda activate Assembly
+    conda activate assembly
 
     # Instale Spades
     conda install -c bioconda spades
 
-Ahora usted tiene tres ambientes: `QualityControl`, `bioinfo` y
-`Assembly`. En el primero, ud tiene instaladas los programas FastQC y
+Ahora usted tiene tres ambientes: `quality`, `mapping`, `bioinfo` y
+`assembly`. En el primero, ud tiene instaladas los programas FastQC y
 Trimmomatic, en el segundo herramientas útiles para gestión de archivos,
 y en el tercero los ensambladores Canu y Spades.
 
 Ud puede pasar de un ambiente a otro usando el siguiente comando:
 
-    # Activa el ambiente Quality Control
-    conda activate QualityControl
+    # Activa el ambiente quality
+    conda activate quality
 
-    # Activa el ambiente Assembly
-    conda activate Assembly
+    # Activa el ambiente assembly
+    conda activate assembly
 
 **8. Instalación Quast v5.0.2**
 
@@ -243,8 +242,7 @@ directorios de las secuencias brutas
     cd 00.RawData/
 
     ## Cree un directorio para cada tipo de secuencias
-    mkdir 01.PacBio
-    mkdir 02.Illumina
+    mkdir 01.PacBio 02.Illumina
 
 Use el comando `mv` para mover los archivos hasta los directorios
 correspondientes.
@@ -272,9 +270,9 @@ de baja calidad en los próximos pasos.
 Ésta etapa es para identificar principalmente las secuencias *outlier*
 con baja calidad (*Q* &lt; 20).
 
-Active el ambiente `QualityControl`:
+Active el ambiente `quality`:
 
-    conda activate QualityControl
+    conda activate quality
 
     ## Confirme que está en el directorio raíz
     pwd
@@ -322,10 +320,7 @@ un boxblot con la distribución de los valores de calidad *Phred Score*
 (eje y) en cada uno de los nucleótidos de las lecturas (eje x). Se
 consideran secuencias de excelente calidad cuando el
 *P**h**r**e**d**S**c**o**r**e* &gt; 30. Los datos que están siendo
-analizados tienen alta calidad, sin embargo, el pair 2 presenta al final
-de las lecturas algunos valores outliers que pueden ser mejorados
-pasando por una etapa de filtrado con Trimmomatic. Es normal que el pair
-2 presente una calidad un poco inferior al pair 1.
+analizados tienen alta calidad.
 
 **PacBio**
 
@@ -345,7 +340,7 @@ archivos, entre ellos, las secuencias en formato `subreads.fasta` y
 archivos de la carpeta `Cpalmiol`, para `~/01.PacBio/` y elimine el
 directorio vazio. Siga los siguientes comandos:
 
-    # Desde la carpeta ~/01.PacBio/ mueve los archivos dentro Cpalmiol para ahí
+    # Desde la carpeta ~/01.PacBio/ mueva los archivos dentro Cpalmiol para ahí
     mv Cpalmiol/* ./
     # Elimina la carpeta Cpalmiol/
     rm -r Cpalmiol/
@@ -370,8 +365,8 @@ Para salir de `nano` use Ctrl+X
 Ahora usando el script `SequelTools.sh` va a ser rodado la herramienta
 de control de calidad.
 
-    # Activa o ambiente PacBioTools
-    conda activate PacBioTools
+    # Activa o ambiente mapping
+    conda activate mapping
     # Va al directorio de SequelTools
     cd ../../SequelTools/Scripts/
     # Corra SequelTools
@@ -382,9 +377,9 @@ outputpath/
 
 Las opciones usadas fueron: `-t Q` indica para el programa que será
 rodado la herramienta de control de calidad. Las otras opciones son `S`
-para *Subsamplig* y `F`para *Filtering*; `-n 20` para indicar el número
-de núcleos a usar durante el proceso. En `-u` se debe indicar el camino
-al archivo `.txt` con la ubicación de los archivos `.subreads.bam`. Por
+para *Subsamplig* y `F`para *Filtering*; `-n` para indicar el número de
+núcleos a usar durante el proceso. En `-u` se debe indicar el camino al
+archivo `.txt` con la ubicación de los archivos `.subreads.bam`. Por
 útlimo `-o` indica el directorio para salvar los archivos de salida del
 proceso.
 
@@ -426,67 +421,6 @@ N50
 </tr>
 </tbody>
 </table>
-
-### 1.2. Trimmomatic
-
-Según fue evaluado en el control de calidad, será necesario filtrar
-algunas lecturas con una calidad un poco por debajo de lo necesario.
-
-El programa Trimmomatic tiene vários parametros que pueden ser
-considerados para filtrar lecturas con baja calidad. Aqui usaremos
-algunos. Si quiere saber que otros parametros y como funciona cada uno
-de ellos, consulte el
-[manual](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf).
-
-Para los datos aqui analizados se usará la siguiente linea de comando:
-
-    # Activa el ambiente QualityControl
-    conda activate QualityControl
-
-    # Crie un directorio para salvar las lecturas limpias
-    mkdir 02.CleandData
-
-    # Crie un directorio para salvar las lecturas no pareadas
-    mkdir unpaired
-
-    # Corra Trimmomatic
-    trimmomatic PE -threads 10 00.RawData/02.Illumina/Cpalmiol_1.fastq.gz 00.RawData/02.Illumina/Cpalmiol_2.fastq.gz 02.CleandData/Cpalmiol_1_paired.fastq.gz unpaired/Cpalmiol_1_unpaired.fastq.gz 02.CleandData/Cpalmiol_2_paired.fastq.gz unpaired/Cpalmiol_2_unpaired.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15
-
-**Sintaxis** trimmomatic PE -threads input\_forward input\_reverse
-output\_forward\_paired output\_forward\_unpaired
-output\_reverse\_paired output\_reverse\_unpaired \[opciones\]
-
-El comando anterior tiene muchas partes. Primero, el nombre del comando
-es `trimmomatic`, a continuación la opción `PE` indica para el programa
-que las secuencias que irán a ser analizadas son de tipo *paired end*.
-Después se encuentran los inputs, forward (pair1) y reverse (pair2).
-Después son los outputs, siendo primero las secuencias forward pareadas
-(limpias) y no pareadas (“descartadas”) y después las secuencias
-reverse. Por último se encuentran los parametros de filtrado. Para este
-caso usamos los parametros `SLIDINGWINDOW`, `LEADING` y `TRAILING`. El
-primero de ellos, genera una ventana deslizante, que en este caso va de
-4 en 4 bases, cálcula el promedio del *Phred Score* y si está por debajo
-de 15 esas bases son cortadas. `LEADING` corta bases del comienzo de la
-lectura si están por debajo de *threshold* de calidad, lo mismo hace
-`TRAILING` pero al final de las lecturas.
-
-Después de correr Trimmomatic es necesario evaluar la calidad de las
-secuencias generadas (“limpias”) usando nuevamente FastQC.
-
-    fastqc -t 10 02.CleandData/* -o 01.FastqcReports/
-
-Descargue los reportes `.html` de las secuencias pareadas
-(i.e. `01.FastqcReports/Cpalmiol_1_paired_fastqc.html` y
-`01.FastqcReports/Cpalmiol_2_paired_fastqc.html`)
-
-<img src="imgs/fastqc1.1.png" align="center"/>
-
-<img src="imgs/fastqc2.1.png" align="center"/>
-
-Observe que ahora todas las bases en ambos archivos tienen
-*P**h**r**e**d**S**c**o**r**e* &gt; 30. Después del proceso de filtrado
-sobrevivieron 20′166.545 *reads*, es decir 99.8 de las secuencias
-iniciales.
 
 ### 1.3. Cobertura
 
