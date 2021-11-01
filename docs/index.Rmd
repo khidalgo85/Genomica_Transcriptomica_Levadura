@@ -123,6 +123,7 @@ class: center, middle, inverse
 
 
 ---
+class: hide_logo
 
 ### Grupo de Ecologia Microbiana e Multi-ômicas - GEMM
 
@@ -147,7 +148,7 @@ Nuestros principales intereses incluyen la compresión de la composición y el f
 
 **Alumnos de maestría**
 
-<img src="imgs/ale.jpeg" width=10%> 🇨🇴<font size=2.5>**Alejandra Calderón Fajardo:** Microbióloga de la Universidad de Pamplona</font>⛽
+<img src="imgs/ale.jpeg" width=10%> 🇨🇴 <font size=2.5>**Alejandra Calderón Fajardo:** Microbióloga de la Universidad de Pamplona</font>⛽
 
 ** Alumnos de doctorado**
 
@@ -196,9 +197,7 @@ class: center, middle, inverse
 <img src="imgs/illumina.png" width=85%>
 ]
 
-[Diferentes plataformas](https://www.illumina.com/systems/sequencing-platforms.html)
-
-
+🔗 [Diferentes plataformas](https://www.illumina.com/systems/sequencing-platforms.html)
 
 ---
 ## Tecnologías de secuenciación
@@ -280,7 +279,7 @@ Para facilitar la escrita y la lectura de la información de calidad, es usada l
 ---
 class: hide_logo
 
-## *Trimming* (Filtración)
+## *Trimming* (Depuración)
 
 Es el proceso de eliminación de las lecturas con baja calidad. Es posible filtrar secuencias baseado en el *score Phred*, o por ambiguedades (remoción de NNs), remoción de adaptadores, remoción de bases al inicio o al final de las secuencias. También es posible trimar por tamaño, por ejemplo eliminar todas las *reads* menores de 50 bp.
 

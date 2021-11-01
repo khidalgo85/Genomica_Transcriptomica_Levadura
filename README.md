@@ -142,7 +142,23 @@ archivos y otras tareas “más simples”.
     # Instala BedTools
     conda install -c bioconda bedtools
 
-**6. Instalación Canu v2.1.1**
+**6. Instalación JellyFish v2.2.10**
+
+[JellyFish](https://github.com/gmarcais/Jellyfish/blob/master/doc/Readme.md)
+es una herramienta que realiza el conteo de k-mers en el DNA,
+permitiendo calcular el tamaño aproximado del genoma y el poercentaje de
+heterogocidad, entre otras métricas.
+
+Para instalar **JellyFish** será usado Conda y será instalado dentro del
+ambiente virtual **bioinfo**
+
+    # Si no está activado
+    conda activate bioinfo
+
+    # Instala Jellyfish
+    conda install -c bioconda jellyfish
+
+**7. Instalación Canu v2.1.1**
 
 [Canu](https://github.com/marbl/canu) es un ensamblador, diseñado
 especialmente para high-noise single-molecule sequencing, tales como
@@ -170,7 +186,7 @@ y posterior instalación de **Canu**
     # Instale Canu
     conda install -c bioconda canu
 
-**7. Instalación Spades v3.15.3**
+**8. Instalación Spades v3.15.3**
 
 [Spades](https://github.com/ablab/spades) es un ensamblador de genomas,
 que puede ser usado tanto para lecturas cortas como largas.
@@ -197,7 +213,7 @@ Ud puede pasar de un ambiente a otro usando el siguiente comando:
     # Activa el ambiente assembly
     conda activate assembly
 
-**8. Instalación Quast v5.0.2**
+**9. Instalación Quast v5.0.2**
 
 Quast (*Quality Assessment Tool for Genome Assemblies*), como su nombre
 lo indica es una herramienta para evaluar la calidad de las montajes de
@@ -320,7 +336,10 @@ un boxblot con la distribución de los valores de calidad *Phred Score*
 (eje y) en cada uno de los nucleótidos de las lecturas (eje x). Se
 consideran secuencias de excelente calidad cuando el
 *P**h**r**e**d**S**c**o**r**e* &gt; 30. Los datos que están siendo
-analizados tienen alta calidad.
+analizados tienen alta calidad, sin embargo, el pair 2 presenta al final
+de las lecturas algunos valores outliers que pueden ser mejorados
+pasando por una etapa de filtrado con Trimmomatic. Es normal que el pair
+2 presente una calidad un poco inferior al pair 1.
 
 **PacBio**
 
@@ -340,7 +359,7 @@ archivos, entre ellos, las secuencias en formato `subreads.fasta` y
 archivos de la carpeta `Cpalmiol`, para `~/01.PacBio/` y elimine el
 directorio vazio. Siga los siguientes comandos:
 
-    # Desde la carpeta ~/01.PacBio/ mueva los archivos dentro Cpalmiol para ahí
+    # Desde la carpeta ~/01.PacBio/ mueve los archivos dentro Cpalmiol para ahí
     mv Cpalmiol/* ./
     # Elimina la carpeta Cpalmiol/
     rm -r Cpalmiol/
@@ -377,9 +396,9 @@ outputpath/
 
 Las opciones usadas fueron: `-t Q` indica para el programa que será
 rodado la herramienta de control de calidad. Las otras opciones son `S`
-para *Subsamplig* y `F`para *Filtering*; `-n` para indicar el número de
-núcleos a usar durante el proceso. En `-u` se debe indicar el camino al
-archivo `.txt` con la ubicación de los archivos `.subreads.bam`. Por
+para *Subsamplig* y `F`para *Filtering*; `-n 20` para indicar el número
+de núcleos a usar durante el proceso. En `-u` se debe indicar el camino
+al archivo `.txt` con la ubicación de los archivos `.subreads.bam`. Por
 útlimo `-o` indica el directorio para salvar los archivos de salida del
 proceso.
 
@@ -422,7 +441,120 @@ N50
 </tbody>
 </table>
 
-### 1.3. Cobertura
+### 1.2. Trimmomatic
+
+Según fue evaluado en el control de calidad, será necesario filtrar
+algunas lecturas con una calidad un poco por debajo de lo necesario.
+
+El programa Trimmomatic tiene vários parametros que pueden ser
+considerados para filtrar lecturas con baja calidad. Aqui usaremos
+algunos. Si quiere saber que otros parametros y como funciona cada uno
+de ellos, consulte el
+[manual](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf).
+
+Para los datos aqui analizados se usará la siguiente linea de comando:
+
+    # Activa el ambiente quality
+    conda activate quality
+
+    # Crie un directorio para salvar las lecturas limpias
+    mkdir 02.CleandData
+
+    # Crie un directorio para salvar las lecturas no pareadas
+    mkdir unpaired
+
+    # Corra Trimmomatic
+    trimmomatic PE -threads 10 00.RawData/02.Illumina/Cpalmiol_1.fastq.gz 00.RawData/02.Illumina/Cpalmiol_2.fastq.gz 02.CleandData/Cpalmiol_1_paired.fastq.gz unpaired/Cpalmiol_1_unpaired.fastq.gz 02.CleandData/Cpalmiol_2_paired.fastq.gz unpaired/Cpalmiol_2_unpaired.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15
+
+**Sintaxis** trimmomatic PE -threads input\_forward input\_reverse
+output\_forward\_paired output\_forward\_unpaired
+output\_reverse\_paired output\_reverse\_unpaired \[opciones\]
+
+El comando anterior tiene muchas partes. Primero, el nombre del comando
+es `trimmomatic`, a continuación la opción `PE` indica para el programa
+que las secuencias que irán a ser analizadas son de tipo *paired end*.
+Después se encuentran los inputs, forward (pair1) y reverse (pair2).
+Después son los outputs, siendo primero las secuencias forward pareadas
+(limpias) y no pareadas (“descartadas”) y después las secuencias
+reverse. Por último se encuentran los parametros de filtrado. Para este
+caso usamos los parametros `SLIDINGWINDOW`, `LEADING` y `TRAILING`. El
+primero de ellos, genera una ventana deslizante, que en este caso va de
+4 en 4 bases, cálcula el promedio del *Phred Score* y si está por debajo
+de 15 esas bases son cortadas. `LEADING` corta bases del comienzo de la
+lectura si están por debajo de *threshold* de calidad, lo mismo hace
+`TRAILING` pero al final de las lecturas.
+
+Después de correr Trimmomatic es necesario evaluar la calidad de las
+secuencias generadas (“limpias”) usando nuevamente FastQC.
+
+    fastqc -t 10 02.CleandData/* -o 01.FastqcReports/
+
+Descargue los reportes `.html` de las secuencias pareadas
+(i.e. `01.FastqcReports/Cpalmiol_1_paired_fastqc.html` y
+`01.FastqcReports/Cpalmiol_2_paired_fastqc.html`)
+
+<img src="imgs/fastqc1.1.png" align="center"/>
+
+<img src="imgs/fastqc2.1.png" align="center"/>
+
+Observe que ahora todas las bases en ambos archivos tienen
+*P**h**r**e**d**S**c**o**r**e* &gt; 30. Después del proceso de filtrado
+sobrevivieron 20′166.545 *reads*, es decir 99.8 de las secuencias
+iniciales. \#\#\# 1.3. Análisis de Kmers
+
+Este análisis es realizado con el objetivo de determinar el tamaño
+aproximado del genoma (**importantísimo para el ensamblaje**) y el grado
+de *heterogocidad*. Será usada la herramienta **Jellyfish** para el
+cálculo de las métricas y la plataforma online [Genome
+Scope](http://qb.cshl.edu/genomescope/) para graficar los resultados.
+
+El análisis será realizado usando como longitud de k-mer 21, que es un
+tamaño suficientemente largo como para que la mayoria de los k-mers no
+sean repetitivos y es lo suficientemente corta para que el análisis sea
+más robusto a los errores de secuenciación. Debido a que a la alta tasa
+de error de las secuencias PacBio (\~5-15%), no puede ser usadas para
+este análisis. Es necesario usar las secuencias cortas de Illumina que
+tienen una tasa de error de alrededor de 2%.
+
+Primero, cree un directorio para los archivos de salida del análisis.
+
+    mkdir 04.KmersAnalysis
+
+Jellyfish solo soporta archivos sin compresión, por eso es necesario
+primero descomprimir las secuencias.
+
+    gzip -d 02.CleanData/*
+
+El comando del análisis se encuentra a continuación
+
+    # Si no está activado...
+    conda activate bioinfo
+
+    # Jellyfish
+    jellyfish count -C -m 21 -s 1000000000 -t 10 02.CleanData/*.fastq -o 04.KmersAnalysis/reads.jf
+
+Usted debe ajustar la memória (`-s`) y los núcleos (`-t`) de acuerdo con
+su máquina. El comando anterior usa 10 núcleos/threads y 1Gb de memória
+RAM.
+
+A continuación, es necesario exportar el conteo de k-mers para un
+histograma, el cual será el input para la plataforma [Genome
+Scope](http://qb.cshl.edu/genomescope/) graficar.
+
+    jellyfish histo -t 10 04.KmersAnalysis/reads.jf > 04.KmersAnalysis/reads.histo
+
+Use el archivo `reads.histo` para graficar en *GenomeScope*, modifique
+los valores de entrada: Read Length 150.
+
+[Resultados](http://genomescope.org/analysis.php?code=d5CPxD4htefge2NqgdWd)
+
+Observe que el perfil tiene un solo pico, lo que significa que se trata
+de un organismo haploide. El porcentaje de heterogocidad es 0.0009%,
+confirmando la ploidia. El tamaño del genoma fue estimado en 12.616.309
+bp o 12.6 Mbp. El porcentaje de repeticiones es del 1.7% siendo de
+222.701 bp.
+
+### 1.4. Cobertura
 
 Cuando se trabaja con secuenciación de genomas, el siguiente paso
 después de conocer la cantidad de secuencias obtenidas y remover las
@@ -437,15 +569,15 @@ lecturas, y G es igual al tamaño aproximado del genoma.
 Así, entonces para el genoma del presente tutorial, con el
 secuenciamiento Illumina tenemos:
 
-*C* = ((150*b**p* \* 2) \* 20166545*b**p*)/15000000*b**p*
+*C* = ((150*b**p* \* 2) \* 20166545*b**p*)/12616309*b**p*
 
-    #> [1] "La cobertura con illumina es de 400x"
+    #> [1] "La cobertura con illumina es de 500x"
 
 Con el secuenciamiento PacBio tenemos:
 
-*C* = ((14465 \* 20166545*b**p*)/15000000*b**p*
+*C* = ((14465 \* 20166545*b**p*)/12616309*b**p*
 
-    #> [1] "La cobertura con PacBio es de 609x"
+    #> [1] "La cobertura con PacBio es de 725x"
 
 ## 2. Ensamblaje
 
@@ -480,30 +612,31 @@ correr Canu para el ensamblaje.
 **Nota:** Este proceso demora aproximadamente \~25h.
 
     # Cria um directorio nuevo para el resultado de Canu
-    mkdir 04.Assemblies
+    mkdir 05.Assemblies
 
-    mkdir 04.Assemblies/01.Canu
+    mkdir 05.Assemblies/01.Canu
 
     # Corre Canu
-    canu -p canu -d 04.Assemblies/01.Canu genomeSize=15.2m corThreads=10 -pacbio-raw 00.RawData/01.PacBio/Cpalmiol_PB.fq
+    canu -p canu -d 05.Assemblies/01.Canu genomeSize=12.6m -maxMemory=25g -maxThreads=15 utgOvlErrorRate=0.065 trimReadsCoverage=2 trimReadsOverlap=500 -pacbio-raw 00.RawData/01.PacBio/Cpalmiol_subreads.fasta
 
 **Sintaxis**
 `canu -p prefix -d path/to/output genomeSize=x corThreads=x -pacbio-raw path/to/sequences/file.fq`
 
 El comando es `canu`. El parametro `-p canu` indica al programa que
 prefijo usar para todos los archivos de salida.
-`-d 04.Assemblies/01.Canu` indica donde ubicar los archivos de salida.
+`-d 05.Assemblies/01.Canu` indica donde ubicar los archivos de salida.
 En `genomeSize` se coloca el tamaño esperado (aproximado) del genoma. En
-`corThreads` se indican el número de núcleos a usar en el proceso. Y por
-último `pacbio-raw` es para indicar el camino a la carpeta que contiene
-las secuencias.
+`MaxThreads` se indica el número máximo de núcleos a usar en todas las
+etapas del proceso. En `MaxMemory` se indica el número máximo de memória
+RAM a usar en todas las etapas del proceso. Y por último `pacbio-raw` es
+para indicar el camino a la carpeta que contiene las secuencias.
 
-Durante la corrida, Canu va a imprimir varios consas en la pantalla
+Durante la corrida, Canu va a imprimir informaciones en la pantalla
 relacionadas con cada paso del proceso.
 
 **2.3.1. Output**
 
-En el directorio `04.Assembly/01.Canu` fueron creados varios outputs,
+En el directorio `05.Assembly/01.Canu` fueron creados varios outputs,
 use el comando `ls` para listar los archivos en el directorio de salida.
 
 -   `canu.contigs.fasta`: contiene las secuencias ensambladas
