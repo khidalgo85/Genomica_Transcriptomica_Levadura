@@ -603,7 +603,7 @@ BedTools, más exactamente la utilidad `bamtofastq`. Recuerde que
     # Confirme que el archivo fue creado
     ls 00.RawData/01.PacBio/Cpalmiol_PB.fq
 
-### 2.3. Canu
+### 2.2. Canu
 
 Además de ensamblar las secuencias, Canu, también va a corregir y a
 trimarlas. Ahora que tenemos las secuencias en formato `.fq`, podemos
@@ -634,7 +634,7 @@ para indicar el camino a la carpeta que contiene las secuencias.
 Durante la corrida, Canu va a imprimir informaciones en la pantalla
 relacionadas con cada paso del proceso.
 
-**2.3.1. Output**
+**Output**
 
 En el directorio `05.Assembly/01.Canu` fueron creados varios outputs,
 use el comando `ls` para listar los archivos en el directorio de salida.
@@ -671,18 +671,26 @@ cobertura es menor que 30*x*. \* Entre outros parámetros, para más
 información consulte
 [aqui](https://canu.readthedocs.io/en/latest/parameter-reference.html)
 
-**2.3.2. Calidad del montaje**
+### 2.3.1. Calidad del montaje
 
-Para evaluar la calidad del montaje, será usada la herramienta *Quast*,
-la cual genera una serie de archivos que permiten conocer las
-principales estadísticas del montaje (i.e. N50, número de contigs,
-tamaño total del montaje, etc).
+Para evaluar la calidad del montaje, serán usadas dos herramientas,
+**Quast** y **Busco**.
+
+**Quast**
+
+Con **Quast** es posible evaluar las principales estadísticas del
+montaje (i.e. N50, número de contigs, tamaño total del montaje, tamaño
+de los contigs, etc). **Quast** genera una serie de archivos y reportes
+donde es posible observar esas estadísticas básicas del montaje. También
+permite comparar entre varios montajes con el objetivo de escoger el
+mejor.
 
     # Crie um diretório para el output
-    mkdir 05.AssemblyQuality
-    mkdir 05.AssemblyQuality/01.Canu
+    mkdir 06.AssemblyQuality
+    mkdir 06.AssemblyQuality/01.Canu
+    mkdir 06.AssemblyQuality/01.Canu/01.Quast
     # Corra Quast
-    quast.py 04.Assemblies/01.Canu/canu.contigs.fasta -o 05.AssemblyQuality/01.Canu/
+    quast.py 05.Assemblies/01.Canu/canu.contigs.fasta -o 06.AssemblyQuality/01.Canu/01.Quast
 
 **Sintaxis** `quast.py path/to/assembly/contigs.fast -o path/to/output/`
 
@@ -713,11 +721,10 @@ Explore el directorio de output usando el comando `ls`.
 comparar y escoger el mejor, según las métricas de evaluación de la
 calidad del montaje**
 
-Una mejora en la línea de comando podria ser:
+### 
 
-    canu -p canu2 -d 04.Assemblies/01.Canu corMhapSensitivity=high corMinCoverage=0 genomeSize=15.2m -pacbio-raw 00.RawData/01.PacBio/Cpalmiol_PB.fq
-
-Evalue el nuevo montaje con **Quast**
+busco -m genome -i ../../../05.Assemblies/01.Canu/canu.contigs.fasta -o
+busco -l saccharomycetes\_odb10 -c 15
 
 ### 2.3. Spades
 
