@@ -1,0 +1,1 @@
+/home/kelly/colaborations/udes/cpalmiol/00.RawData/01.PacBio/m54229_191221_175250.subreads.bam

@@ -238,7 +238,7 @@ un archivo VCF con las variantes llamadas a partir de los datos leídos.
     # Instale MaSuRCA
     conda install -c bioconda masurca
 
-**9. Instalación BWA**
+**11. Instalación BWA**
 
 [BWA](http://bio-bwa.sourceforge.net/bwa.shtml) es un alineador de
 secuencias. Será instalado como dependencia para **POLCA**.
@@ -249,7 +249,7 @@ secuencias. Será instalado como dependencia para **POLCA**.
     # instale BWA
     conda install -c bioconda bwa
 
-**10. Instalación Spades v3.15.3**
+**12. Instalación Spades v3.15.3**
 
 [Spades](https://github.com/ablab/spades) es un ensamblador de genomas,
 que puede ser usado tanto para lecturas cortas como largas.
@@ -263,7 +263,7 @@ dentro do ambiente virtual *assmebly*.
     # Instale Spades
     conda install -c bioconda spades
 
-Ahora usted tiene tres ambientes: `quality`, `mapping`, `bioinfo` y
+Ahora usted tiene tres ambientes: `quality`, `bioinfo` , `masurca` y
 `assembly`. En el primero, ud tiene instaladas los programas FastQC y
 Trimmomatic, en el segundo herramientas útiles para gestión de archivos,
 y en el tercero los ensambladores Canu y Spades.
@@ -335,7 +335,12 @@ Al final del proceso de organización debe ver sus directorios así:
 
     Cpalmiol_rawdata1.zip
 
-```` ls 00.RawData/02.Illumina`` ``` Cpalmiol_1.fastq.gz  Cpalmiol_2.fastq.gz ``` Es fuertemente recomendado correr los comandos desde el directorio base, que para este caso es: ````cpalmiol/\`
+`ls 00.RawData/02.Illumina`
+
+    Cpalmiol_1.fastq.gz  Cpalmiol_2.fastq.gz
+
+Es fuertemente recomendado correr los comandos desde el directorio base,
+que para este caso es: `cpalmiol/`
 
 ## 1. Control de Calidad
 
@@ -397,12 +402,11 @@ bp y el %GC es de 39. El gráfico más importante para saber la calidad de
 las lecturas es el primero, *Per base sequence quality*. Este gráfico es
 un boxblot con la distribución de los valores de calidad *Phred Score*
 (eje y) en cada uno de los nucleótidos de las lecturas (eje x). Se
-consideran secuencias de excelente calidad cuando el
-*P**h**r**e**d**S**c**o**r**e* &gt; 30. Los datos que están siendo
-analizados tienen alta calidad, sin embargo, el pair 2 presenta al final
-de las lecturas algunos valores outliers que pueden ser mejorados
-pasando por una etapa de filtrado con Trimmomatic. Es normal que el pair
-2 presente una calidad un poco inferior al pair 1.
+consideran secuencias de excelente calidad cuando el Phred Score&gt;30.
+Los datos que están siendo analizados tienen alta calidad, sin embargo,
+el pair 2 presenta al final de las lecturas algunos valores outliers que
+pueden ser mejorados pasando por una etapa de filtrado con Trimmomatic.
+Es normal que el pair 2 presente una calidad un poco inferior al pair 1.
 
 **PacBio**
 
@@ -426,48 +430,6 @@ directorio vazio. Siga los siguientes comandos:
     mv Cpalmiol/* ./
     # Elimina la carpeta Cpalmiol/
     rm -r Cpalmiol/
-
-Usando o *SequelTools* será evaluada la calidad de las secuencias
-generadas con PacBio.
-
-En este caso es solo una conjunto de datos, pero si fueran varios los
-siguientes comandos facilitan el proceso. Con estos comandos es posible
-crear un archivo de texto con la ubicación de los archivos de
-`subreads.bam` y `scraps.bam`
-
-    find $(pwd) -name "*subreads.bam"  > subFiles.txt
-    find $(pwd) -name "*scraps.bam"  > scrFiles.txt
-
-Revise el contenido de los archivos generados
-
-    nano subFiles.txt
-
-Para salir de `nano` use Ctrl+X
-
-Ahora usando el script `SequelTools.sh` va a ser rodado la herramienta
-de control de calidad.
-
-    # Activa o ambiente mapping
-    conda activate mapping
-    # Va al directorio de SequelTools
-    cd ../../SequelTools/Scripts/
-    # Corra SequelTools
-    bash SequelTools.sh -t Q -n 12 -u ../../00.RawData/01.PacBio/subFiles.txt -o ../../03.PacBioQuality
-
-**Sintaxis**
-`path/to/SquelTools.sh [opciones] -u subreads.files o outputpath/`
-
-Las opciones usadas fueron: `-t Q` indica para el programa que será
-rodado la herramienta de control de calidad. Las otras opciones son `S`
-para *Subsamplig* y `F`para *Filtering*; `-n 20` para indicar el número
-de núcleos a usar durante el proceso. En `-u` se debe indicar el camino
-al archivo `.txt` con la ubicación de los archivos `.subreads.bam`. Por
-útlimo `-o` indica el directorio para salvar los archivos de salida del
-proceso.
-
-Como salida, el programa crea varios gráficos y una tabla con el resumen
-de las métricas más importantes, como: *número de reads, bases totales,
-N50*, entre outras.
 
 <table class=" lightable-material-dark" style="font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <thead>
@@ -521,17 +483,16 @@ Para los datos aqui analizados se usará la siguiente linea de comando:
     conda activate quality
 
     # Crie un directorio para salvar las lecturas limpias
-    mkdir 02.CleandData
+    mkdir 02.CleanData
 
     # Crie un directorio para salvar las lecturas no pareadas
     mkdir unpaired
 
     # Corra Trimmomatic
-    trimmomatic PE -threads 10 00.RawData/02.Illumina/Cpalmiol_1.fastq.gz 00.RawData/02.Illumina/Cpalmiol_2.fastq.gz 02.CleandData/Cpalmiol_1_paired.fastq.gz unpaired/Cpalmiol_1_unpaired.fastq.gz 02.CleandData/Cpalmiol_2_paired.fastq.gz unpaired/Cpalmiol_2_unpaired.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15
+    trimmomatic PE -threads 10 00.RawData/02.Illumina/Cpalmiol_1.fastq.gz 00.RawData/02.Illumina/Cpalmiol_2.fastq.gz 02.CleanData/Cpalmiol_1_paired.fastq.gz unpaired/Cpalmiol_1_unpaired.fastq.gz 02.CleanData/Cpalmiol_2_paired.fastq.gz unpaired/Cpalmiol_2_unpaired.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15
 
-**Sintaxis** trimmomatic PE -threads input\_forward input\_reverse
-output\_forward\_paired output\_forward\_unpaired
-output\_reverse\_paired output\_reverse\_unpaired \[opciones\]
+**Sintaxis**
+`trimmomatic PE -threads input_forward input_reverse output_forward_paired output_forward_unpaired output_reverse_paired output_reverse_unpaired [opciones]`
 
 El comando anterior tiene muchas partes. Primero, el nombre del comando
 es `trimmomatic`, a continuación la opción `PE` indica para el programa
@@ -550,7 +511,7 @@ lectura si están por debajo de *threshold* de calidad, lo mismo hace
 Después de correr Trimmomatic es necesario evaluar la calidad de las
 secuencias generadas (“limpias”) usando nuevamente FastQC.
 
-    fastqc -t 10 02.CleandData/* -o 01.FastqcReports/
+    fastqc -t 10 02.CleanData/* -o 01.FastqcReports/
 
 Descargue los reportes `.html` de las secuencias pareadas
 (i.e. `01.FastqcReports/Cpalmiol_1_paired_fastqc.html` y
@@ -560,10 +521,11 @@ Descargue los reportes `.html` de las secuencias pareadas
 
 <img src="imgs/fastqc2.1.png" align="center"/>
 
-Observe que ahora todas las bases en ambos archivos tienen
-*P**h**r**e**d**S**c**o**r**e* &gt; 30. Después del proceso de filtrado
-sobrevivieron 20′166.545 *reads*, es decir 99.8 de las secuencias
-iniciales. \#\#\# 1.3. Análisis de Kmers
+Observe que ahora todas las bases en ambos archivos tienen Phred
+Score&gt;30. Después del proceso de filtrado sobrevivieron 20′166.545
+*reads*, es decir 99.8 de las secuencias iniciales.
+
+### 1.3. Análisis de Kmers
 
 Este análisis es realizado con el objetivo de determinar el tamaño
 aproximado del genoma (**importantísimo para el ensamblaje**) y el grado

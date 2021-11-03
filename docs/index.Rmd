@@ -521,7 +521,8 @@ class: center, middle, inverse
 ---
 ## Práctica III
 
-.pull-left[**Abordaje 1**
+
+**Abordaje 1**
 
 * <font size=2>Estimación del tamaño del genoma: Jellyfish</font>
 * <font size=2>Montaje del genoma: Canu</font>
@@ -531,21 +532,26 @@ class: center, middle, inverse
 * <font size=2>Evaluación de la calidad del polished assembly: Quast/BUSCO</font>
 * <font size=2>Scalffolding: SSPACE</font>
 
+---
+## Práctica III
+
 **Abordaje 2**
+* <font size=2>Estimación del tamaño del genoma: Jellyfish</font>
 * <font size=2>Montaje del genoma: Canu</font>
 * <font size=2>Montaje del Híbrida: Spades</font>
 * <font size=2>Evaluación de la calidad del raw assembly: Quast/BUSCO</font>
 * <font size=2>Alineamiento short reads/ raw assembly: BWA</font>
 * <font size=2>Polishing: Polca/MaSurCa tool kit</font>
 * <font size=2>Evaluación de la calidad del polished assembly: Quast/BUSCO</font>
-]
 
-.pull-right[
+---
+## Práctica III
+
 .center[
 <img src="imgs/montaje.png" width=90%>
 ]
+
 [Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura#readme)
-]
 
 ---
 class: center, middle, inverse
