@@ -157,7 +157,58 @@ conda activate assembly
 conda install -c bioconda canu
 ```
 
-**8. Instalación Spades v3.15.3**
+**8. Instalación Quast v5.0.2**
+
+[Quast](http://quast.sourceforge.net/docs/manual.html) (*QUality ASsesment Tool*) es una herramienta para evaluar la calidad de genomas ensamblados calculando diversas métricas (tamaño de los contigs, número de contigs, N50, L50, etc)
+
+```
+# Active el ambiente bioinfo
+conda activate bioinfo
+
+# Instale Quast
+conda install -c bioconda quast
+```
+
+**9.Instalación BUSCO v5.2.2**
+
+[BUSCO](https://busco.ezlab.org/busco_userguide.html) es un porgrama que usa como base la filogenómica y los genes ortólogos para crear conjunto de genes por linajes, los cuales usa como base de datos para comparar contra genomas montados y calcular la completeza y contaminación del genoma estudiado.
+
+Por problemas de compatibilidad de la versión de *Python* usada por este programa, es mejor instalarlo en un ambiente virutal separado. 
+```
+# Crea el ambiente virtual e instala Busco
+conda create -n busco -c conda-forge -c bioconda busco=5.2.2
+```
+
+**10. Instalación MaSuRCA Toolkit v4.0.5**
+
+[MaSuRCA](https://github.com/alekseyzimin/masurca) (*Maryland Super Read Cabog Assembler*) es un conjunto de herramientas (*toolkit* ) entre las que están, *MaSuRCA genome assembler*, *QuORUM error corrector*, *POLCA genome polishing*, *Chromosome scaffolder*, *Jellyfish kmer counter*, y *MUMmer aligner*. Por ahora usaremos especialmente **POLCA** para la etapa de *Polishing*.
+**POLCA** es una herramienta de pulido destinada a mejorar la precisión del consenso en conjuntos de genomas producidos a partir de secuencias largas usando PacBio SMRT o Oxford Nanopore. **POLCA** utiliza lecturas Illumina o PacBio HIFI para el mismo genoma para mejorar la calidad de consenso del ensamblaje. Sus entradas son la secuencias del genoma y un archivo (o archivos) fasta o fastq de las lecturas de Illumina o PacBioHIFI y sus salidas son el genoma pulido y un archivo VCF con las variantes llamadas a partir de los datos leídos.
+
+```
+# Cree un ambiente llamado masurca
+conda create -n masurca
+
+# Active el nuevo ambiente
+conda activate masurca
+
+# Instale MaSuRCA
+conda install -c bioconda masurca
+```
+
+
+**9. Instalación BWA**
+
+[BWA](http://bio-bwa.sourceforge.net/bwa.shtml) es un alineador de secuencias. Será instalado como dependencia para **POLCA**.
+
+```
+# Si no está activado
+conda activate masurca
+
+# instale BWA
+conda install -c bioconda bwa
+```
+
+**10. Instalación Spades v3.15.3**
 
 [Spades](https://github.com/ablab/spades) es un ensamblador de genomas, que puede ser usado tanto para lecturas cortas como largas. 
 
@@ -336,7 +387,7 @@ bash SequelTools.sh -t Q -n 12 -u ../../00.RawData/01.PacBio/subFiles.txt -o ../
 ```
 
 **Sintaxis**
-path/to/SquelTools.sh [opciones] -u subreads.files o outputpath/
+`path/to/SquelTools.sh [opciones] -u subreads.files o outputpath/`
 
 Las opciones usadas fueron: `-t Q` indica para el programa que será rodado la herramienta de control de calidad. Las otras opciones son `S` para *Subsamplig* y `F`para *Filtering*; `-n 20` para indicar el número de núcleos a usar durante el proceso. En `-u` se debe indicar el camino al archivo `.txt` con la ubicación de los archivos `.subreads.bam`. Por útlimo `-o` indica el directorio para salvar los archivos de salida del proceso. 
 
@@ -483,7 +534,7 @@ ls 00.RawData/01.PacBio/Cpalmiol_PB.fq
 
 Además de ensamblar las secuencias, Canu, también va a corregir y a trimarlas. Ahora que tenemos las secuencias en formato `.fq`, podemos correr Canu para el ensamblaje.
 
-**Nota:** Este proceso demora aproximadamente ~25h.
+**Nota:** Este proceso demora aproximadamente ~14h.
 
 ```
 # Cria um directorio nuevo para el resultado de Canu
@@ -504,7 +555,7 @@ Durante la corrida, Canu va a imprimir informaciones en la pantalla relacionadas
 
 **Output**
 
-En el directorio `05.Assembly/01.Canu` fueron creados varios outputs, use el comando `ls` para listar los archivos en el directorio de salida.
+En el directorio `05.Assemblies/01.Canu` fueron creados varios outputs, use el comando `ls` para listar los archivos en el directorio de salida.
 
 * `canu.contigs.fasta`: contiene las secuencias ensambladas
 * `canu.unassembled.fasta`: son las lecturas que no pudieron ser ensambladas.
@@ -532,6 +583,9 @@ Para evaluar la calidad del montaje, serán usadas dos herramientas, **Quast** y
  Con **Quast** es posible evaluar las principales estadísticas del montaje (i.e. N50, número de contigs, tamaño total del montaje, tamaño de los contigs, etc). **Quast** genera una serie de archivos y reportes donde es posible observar esas estadísticas básicas del montaje. También permite comparar entre varios montajes con el objetivo de escoger el mejor.
 
 ```
+# Active el ambiente bioinfo
+conda activate bioinfo
+
 # Crie um diretório para el output
 mkdir 06.AssemblyQuality
 mkdir 06.AssemblyQuality/01.Canu
@@ -541,6 +595,10 @@ quast.py 05.Assemblies/01.Canu/canu.contigs.fasta -o 06.AssemblyQuality/01.Canu/
 ```
 **Sintaxis**
 `quast.py path/to/assembly/contigs.fast -o path/to/output/`
+
+**Interpetación de los resultados**
+
+La idea de usar **Quast**, aparte de evaluar las estidísticas básicas del montaje, es comparar varios montajes para escoger el mejor. Por ejemplo: entre menor sea el número de contigs es mejor, porque significa que el genoma quedó menos fragementado. Y eso se reflejará en el tamaño de los contigs que serán grandes. El valor de N50, es mejor entre mayor sea. Así mismo, es ideal menor número de gaps y Ns. 
 
 **Outputs**
 
@@ -558,11 +616,208 @@ Explore el directorio de output usando el comando `ls`.
 
 * `basis_stats/`: Dentro de esta carpeta se encuentran varios gráficos en formato `.pdf`. 
 
-**Es posible correr el montaje de nuevo con otros parámetros para comparar y escoger el mejor, según las métricas de evaluación de la calidad del montaje**
+**Nota: Es posible correr el montaje de nuevo con otros parámetros para comparar y escoger el mejor, según las métricas de evaluación de la calidad del montaje**
 
-###
+**Busco**
 
-busco -m genome -i ../../../05.Assemblies/01.Canu/canu.contigs.fasta -o busco -l saccharomycetes_odb10 -c 15
+Este programa está baseado en las expectativas evolutidas del contenido de genes ortólogos de copia única. Es decir, con esta herramienta podemos evaluar que tan completo está el genoma, teniendo en cuenta los genes de copia única y así mismo que tan contaminado está si estos genes son encontrados más de una vez en el genoma. Para esto es usado un conjunto de genes encontrados en linajes relacionadas al genoma en estudio. Para nuestro caso, será usado el conjunto de genes de la clase Saccharomycetes.
+
+```
+# Entre a la carpeta 06.AssemblyQuality/01.Canu
+cd 06.AssemblyQuality/01.Canu/
+
+# Activa el ambiente busco
+conda activate busco
+```
+Antes de correr el análisis en BUSCO, explore las opciones en el menú de ayuda, con `busco -h`.
+```
+# Busco
+busco -m genome -i ../../../05.Assemblies/01.Canu/canu.contigs.fasta -o 02.Busco -l saccharomycetes_odb10 -c 15
+```
+
+**Sintaxis**
+
+`busco -m [mode] -i [sequence_file] -l [lineage] [other options]`
+
+* `-m` o `--mode`: hay tres modos dependiendo del tipo de información que se va a analizar: genome, proteins, transcriptome.
+
+* `-i` o `--in`: datos de entrada, p.e. contigs montados. 
+
+* `-l` o `--lineage_dataset`: informe aqui la base de datos que quiere usar, según el linaje escogido. Para saber que linajes se encuentran en la base de datos de BUSCO, digite `busco --list-datasets`.
+
+**Interpretación de los resultados**
+
+**Busco** intenta proporcionar una evaluación cuantitativa de la completitud en términos del contenido génico esperado de un genoma montado. Los resultados se simplifican en las categorías *complete* y *single-copy*, *complete* y *duplicated*, *fragmented* o *missing* BUSCOs. 
+
+Los resultados de la completud de BUSCO tienen sentido solo en el contexto de la biología de su organismo. Debe comprender si los genes faltantes (*missing*) o duplicados (*duplicated*) son de origen biológico o técnico. Por ejemplo, un alto nível de duplicación puede explicarse por un evento de duplicación completo reciente (biológico) o un ensamblaje quimérico de haplotipos (técnico). 
+
+**outputs**
+
+* `run_saccharomycetes_odb10/busco_sequences`: dentro de esta carpeta se encuentran las secuencias en formato `.fasta` de los BUSCOs **fragmented** (`fragmented_busco_sequences/`), *multi-copy*, (`multi_copy_busco_sequences/`), *single-copy* (`single_copy_busco_sequences/`).
+
+* `run_saccharomycetes_odb10/short_summary.txt`: Es un archivo de texto plano que contine el resumen de los resultados de BUSCO. Aqui se encuentra el resultado final, es decir, el número y porcentaje de BUSCOs completos, single-copy, duplicados, fragmentados y missing.
+
+```
+***** Results: *****
+
+	C:99.6%[S:99.4%,D:0.2%],F:0.1%,M:0.3%,n:2137	   
+	2129	Complete BUSCOs (C)			   
+	2124	Complete and single-copy BUSCOs (S)	   
+	5	Complete and duplicated BUSCOs (D)	   
+	2	Fragmented BUSCOs (F)			   
+	6	Missing BUSCOs (M)			   
+	2137	Total BUSCO groups searched
+```
+
+* `run_saccharomycetes_odb10/full_table.tsv`: Es una tabla con los resultados completos, con *scores* y tamaños de los BUSCOs encontrados, además de las coordinadas dentro del genoma.
+
+* `run_saccharomycetes_odb10/missing_busco_list.tsv`: Contiene la lista de *missing BUSCOs*.
+
+* `run_saccharomycetes_odb10/hmmer_output/`: tablas con la salida de HMMER con las busquedas de BUSCOs HMMs.
+
+* `run_saccharomycetes_odb10/meaeuk_output/`: Resultados de la predicción de genes con *Metaeuk*. 
+
+* `busco_downloads/`: en este directorio está la base de datos que BUSCO descargó, según el linaja escogido, Saccharomycetes.
+
+* `logs/`: Aqui se encuentran los logs de cada programa usado durante el processo, `busco.log`, `hmmsearch_err.log`, `hmmsearch_out.log`, `metaeuk_err.log` y `metaeuk_out.log`.
+
+**Gráfico**
+
+Los desarrolladores de **Busco** disponibilizaron un script de **Python** y **R** para graficar los resultados. A continuación el comando para usarlo:
+
+```
+python3 generate_plot.py -wd 02.Busco/
+```
+
+Rapidamente será generado un gráfico de barras con el porcentaje de cada tipo de genes encontrados en el genoma.
+
+<img src="imgs/busco_figure.png" align="center" width="85%"/>
+
+## 3. Polishing
+
+En esta etapa serán usadas las secuencias cortas de Illumina con el fin de corregir errores en el genoma montado. En un primer paso serán alineadas estas secuencias en el genoma ensamblado con los programas **BWA**. Y en segunda instancia será usado **Polca** para corregir pequeños indels, gaps, montajes errados, etc. 
+
+El programa **Polca** realiza todo el proceso con una sola linea de comando. 
+
+```
+## Activa el ambiente masurca
+conda activate masurca
+
+## Vuelva al directorio base
+
+cd ../../
+
+## Confirme 
+pwd
+
+## Cree un directorio para el output
+mkdir 08.Polishing
+
+# Entre al nuevo directorio
+cd 08.Polishing/
+```
+Corra Polca
+```
+polca.sh -a ../05.Assemblies/01.Canu/canu.contigs.fasta -r '../02.CleanData/Cpalmiol_1_paired.fastq ../02.CleanData/Cpalmiol_2_paired.fastq' -t 15 -m 1G
+```
+
+**Sintaxis**
+
+`polca.sh -a genome.fasta -r 'reads1.fastq reads2.fastq' -t [núm threads] -m [gigas de memoria]`
+
+* `-a`: Genoma montado
+* `-r`: reads cortas
+* `-t`: Número de núcleos/threads
+* `-m`: Gigas de memoria por thread para samtools
+
+**Outputs**
+
+Polca va a generar una serie de archivos relacionados al mapeo de las secuencias cortas en el montaje. Los dos *outputs* más importantes son `canu.contigs.fasta.report` y `canu.contigs.fasta.PolcaCorrected.fa`. En el primero se encuentran las estadísticas básicas del proceso y el segundo es el genoma mejorado.
+
+`less canu.contigs.fasta.report`
+
+```
+Substitution Errors: 31
+Insertion/Deletion Errors: 56
+Assembly Size: 13394208
+Consensus Quality: 99.9994
+```
+ Se puede observar que fueron corregidos 31 errores de substitución, 56 de inserción o deleción y que la calidad consenso del genoma es 99.99%.
+ 
+
+### 3.1. Calidad del montaje pulido
+
+Con el objetivo de evaluar las mejorías del genoma después del *polishing*, debe ser rodado nuevamente **Quast** y **Busco**.
+
+Primero para facilitar, cambie el nombre del archivo del genoma pulido `canu.contigs.fasta.PolcaCorrected.fa` para `genome_polished.fasta` usando el comando `mv`.
+
+**Quast**
+```
+# Vuelva para el directorio base
+cd ../
+
+# Active el ambiente bioinfo
+conda activate bioinfo
+
+# Crie um diretório para el output
+mkdir 06.AssemblyQuality/02.PolishedGenome
+mkdir 06.AssemblyQuality/02.PolishedGenome/01.Quast
+
+# Corra Quast
+quast.py 05.Assemblies/01.Canu/canu.contigs.fasta 07.Polishing/genome_polished.fasta  -o 06.AssemblyQuality/02.PolishedGenome/01.Quast
+```
+
+Descargue el archivo `report.html`
+
+
+<img src="imgs/report_quast2.png" align="center" width="100%" />
+
+Observe que todas las métricas fueron mejoradas con el *polishing*.
+
+**BUSCO**
+
+```
+# Active el ambiente busco
+conda activate busco
+
+# Cree directorios para el output
+mkdir 06.AssemblyQuality/02.PolishedGenome/02.Busco
+
+
+# Entre al directorio 
+cd 06.AssemblyQuality/02.PolishedGenome
+
+busco -m genome -i ../../07.Polishing/genome_polished.fasta -o 02.Busco -l saccharomycetes_odb10 -c 15
+```
+
+`nano 02.Busco/run_saccharomycetes_odb10/short_summary.txt`
+
+Resultado
+
+```
+***** Results: *****
+
+        C:99.6%[S:99.4%,D:0.2%],F:0.1%,M:0.3%,n:2137
+        2129    Complete BUSCOs (C)
+        2124    Complete and single-copy BUSCOs (S)
+        5       Complete and duplicated BUSCOs (D)
+        2       Fragmented BUSCOs (F)
+        6       Missing BUSCOs (M)
+        2137    Total BUSCO groups searched
+```
+
+**Gráfico**
+
+Crie el gráfico de barras con el resultado de Busco
+
+```
+python3 generate_plot.py -wd 02.Busco/
+```
+
+<img src="imgs/busco_figure2.png" align="center" width="85%"/>
+
+En cuanto a completud y contaminación, no hubo cambios entre el genoma montado original y el pulido.
+
 
 
 ### 2.3. Spades
