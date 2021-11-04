@@ -376,7 +376,7 @@ G es igual al tamaño aproximado del genoma.
 **Ejemplo**
 Fue secuenciado el genoma de una bacteria con tamaño aproximado de 2 Mbp. Se obtuvieron 3 millones de reads paired end de 100 bp. El cálculo de la cobertura para ese genoma es:
 
-$$C = ((3.000.000*2)*100)/2.000.000$$
+$$C = ((100*2)*3.000.000)/2.000.000$$
 $$C = 300x$$
 
 Entre mayor sea la cobertura la calidad del montaje también es mayor. Para Illumina $>100x$, PacBio $>50x$
@@ -529,8 +529,8 @@ class: center, middle, inverse
 * <font size=2>Evaluación de la calidad del raw assembly: Quast/BUSCO</font>
 * <font size=2>Alineamiento short reads/ raw assembly: BWA</font>
 * <font size=2>Polishing: Polca/MaSurCa tool kit</font>
-* <font size=2>Evaluación de la calidad del polished assembly: Quast/BUSCO</font>
-* <font size=2>Scalffolding: SSPACE</font>
+* <font size=2>Evaluación de la calidad del ensamble mejorado: Quast/BUSCO</font>
+
 
 ---
 ## Práctica III
@@ -538,11 +538,11 @@ class: center, middle, inverse
 **Abordaje 2**
 * <font size=2>Estimación del tamaño del genoma: Jellyfish</font>
 * <font size=2>Montaje del genoma: Canu</font>
-* <font size=2>Montaje del Híbrida: Spades</font>
+* <font size=2>Montaje híbrido: Spades</font>
 * <font size=2>Evaluación de la calidad del raw assembly: Quast/BUSCO</font>
 * <font size=2>Alineamiento short reads/ raw assembly: BWA</font>
 * <font size=2>Polishing: Polca/MaSurCa tool kit</font>
-* <font size=2>Evaluación de la calidad del polished assembly: Quast/BUSCO</font>
+* <font size=2>Evaluación de la calidad del ensamble mejorado: Quast/BUSCO</font>
 
 ---
 ## Práctica III

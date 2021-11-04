@@ -4,9 +4,9 @@
     <title>Colaboración Científica CIBAS/UDES - GEMM/UNICAMP</title>
     <meta charset="utf-8" />
     <meta name="author" content="Kelly Hidalgo" />
-    <meta name="date" content="2021-11-03" />
+    <meta name="date" content="2021-11-04" />
     <script src="index_files/header-attrs-2.9/header-attrs.js"></script>
-    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"d06a3c69a7734b79adaf646d69f50e26","expires":1}</script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"f202bbf9205c4be5aa0005ec1074a1e0","expires":1}</script>
     <script src="index_files/himalaya-1.1.0/himalaya.js"></script>
     <script src="index_files/js-cookie-3.0.0/js.cookie.js"></script>
     <link href="index_files/editable-0.2.6/editable.css" rel="stylesheet" />
@@ -36,7 +36,7 @@ class: center, middle, inverse, title-slide
 ## Pasantía en Bioinformática - Genómica de Levaduras
 ### Kelly Hidalgo
 ### Grupo de Ecologia Microbiana e Multi-ômicas
-### 2021-11-03
+### 2021-11-04
 
 ---
 
@@ -388,7 +388,7 @@ G es igual al tamaño aproximado del genoma.
 **Ejemplo**
 Fue secuenciado el genoma de una bacteria con tamaño aproximado de 2 Mbp. Se obtuvieron 3 millones de reads paired end de 100 bp. El cálculo de la cobertura para ese genoma es:
 
-`$$C = ((3.000.000*2)*100)/2.000.000$$`
+`$$C = ((100*2)*3.000.000)/2.000.000$$`
 `$$C = 300x$$`
 
 Entre mayor sea la cobertura la calidad del montaje también es mayor. Para Illumina `\(&gt;100x\)`, PacBio `\(&gt;50x\)`
@@ -541,8 +541,8 @@ class: center, middle, inverse
 * &lt;font size=2&gt;Evaluación de la calidad del raw assembly: Quast/BUSCO&lt;/font&gt;
 * &lt;font size=2&gt;Alineamiento short reads/ raw assembly: BWA&lt;/font&gt;
 * &lt;font size=2&gt;Polishing: Polca/MaSurCa tool kit&lt;/font&gt;
-* &lt;font size=2&gt;Evaluación de la calidad del polished assembly: Quast/BUSCO&lt;/font&gt;
-* &lt;font size=2&gt;Scalffolding: SSPACE&lt;/font&gt;
+* &lt;font size=2&gt;Evaluación de la calidad del ensamble mejorado: Quast/BUSCO&lt;/font&gt;
+
 
 ---
 ## Práctica III
@@ -550,11 +550,11 @@ class: center, middle, inverse
 **Abordaje 2**
 * &lt;font size=2&gt;Estimación del tamaño del genoma: Jellyfish&lt;/font&gt;
 * &lt;font size=2&gt;Montaje del genoma: Canu&lt;/font&gt;
-* &lt;font size=2&gt;Montaje del Híbrida: Spades&lt;/font&gt;
+* &lt;font size=2&gt;Montaje híbrido: Spades&lt;/font&gt;
 * &lt;font size=2&gt;Evaluación de la calidad del raw assembly: Quast/BUSCO&lt;/font&gt;
 * &lt;font size=2&gt;Alineamiento short reads/ raw assembly: BWA&lt;/font&gt;
 * &lt;font size=2&gt;Polishing: Polca/MaSurCa tool kit&lt;/font&gt;
-* &lt;font size=2&gt;Evaluación de la calidad del polished assembly: Quast/BUSCO&lt;/font&gt;
+* &lt;font size=2&gt;Evaluación de la calidad del ensamble mejorado: Quast/BUSCO&lt;/font&gt;
 
 ---
 ## Práctica III

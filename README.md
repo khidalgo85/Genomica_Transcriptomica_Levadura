@@ -16,9 +16,7 @@ PacBio y cortas de Illumina para corrección de errores.
 
 ## Herramientas bioinformáticas
 
-### Instalación
-
-**1. Instalación Miniconda**
+### Instalación Anaconda
 
 Es recomendable instalar Anaconda, pues es la forma más fácil para
 instalar las herramientas bioinformáticas necesarias para el desarrollo
@@ -32,263 +30,8 @@ se encuentran las instrucciones para la instalación de Anaconda.
 
 Después de instalado *Anaconda* y su gestor *Conda*, podran ser creados
 *ambientes virtuales* para la instalación de las diferentes herramientas
-bioinformáticas que serán usadas.
-
-**2. Instalación FastQC**
-[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) es
-una herramienta para evaluar graficamente la calidad de las secuencias
-de Illumina.
-
-Las instrucciones para instalación usando conda se encuentran
-[aqui](https://anaconda.org/bioconda/fastqc). Sin embargo aqui en este
-tutorial también serán presentadas
-
-Como ya fue explicado anteriorimente, con conda es posible crear
-ambientes virutuales para instalar las herramientas bioinformáticas. El
-primer ambiente que será creado se llamará **quality**, donde se
-instalaran los programas relacionados con este proceso.
-
-    conda create -n quality
-
-Durante el proceso, el sistema preguntará sí desea proceder con la
-creación del ambiente, con las opciones y/n (si o no). Escriba `y` y
-después de eso el ambiente virtual estará creado.
-
-Para instalar las herramientas dentro del ambiente anteriormente creado,
-es necesario activarlo
-
-    conda activate quality
-
-El ambiente estará activo cuando el nombre de éste se encuentra en el
-comienzo de la linea de comando, así: `(quality) user@server:~/$`.
-
-Posteriormente se procede a la instalación del programa:
-
-    conda install -c bioconda fastqc
-
-De nuevo será cuestionado si desea continuar con el proceso o no.
-Escriba `y`.
-
-**3. Instalación Trimmomatic v0.39**
-
-[Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) es un
-programa para filtrar (remover) lecturas o *reads* cortas de baja
-calidad.
-
-Como se trata de una herramienta que participa dentro del proceso de
-control de calidad, será instalada dentro del ambiente virtual
-**quality**
-
-    # Si no está activado el ambiente
-    conda activate quality
-
-    # Instale Trimmomatic
-    conda install -c bioconda trimmomatic
-
-**4. Instalación SequelTools**
-
-Sequeltools es un programa que provee una colección de tres heramientas
-para trabajar con secuencias de PacBio. Las herramientas son: *Quality
-Control (QC) tool*, *Read Subsampling tool* y *Read Filtering tool*. La
-herramienta *QC* produce múltiples estadísticas y gráficos describiendo
-la calidad de los datos, inclueyendo N50, tamaño y cantidad de las
-lecturas, entre otras. *Read Subsampling tool* sirve para filtrar las
-secuencias usando algún critério, como por ejemplo las *subreads* más
-largas.
-
-SequelTools no está dentro de conda, por lo que será instalado de manera
-diferente. Sin embargo, primero va a ser creado un ambiente virtual
-llamado *mapping*, donde se instalarán herramientas relacionadas con la
-manipulación de secuencias de PacBio. SequelTools necesita algunas
-dependencias para funcionar, com *SamTools*, *Python* y *R*. Para
-usuarios de Linux, no es necesario instalar *Python* ni *R* pues vienen
-pre instaladas. *SamTools* será instalado dentro del ambiente virtual
-*mapping*.
-
-    # Crea el ambiente 
-    conda create -n mapping
-
-    # Activa el ambiente
-    conda activate mapping
-
-    # Instala SamTools
-    conda install -c bioconda samtools
-
-A continuación los comandos para la instalacion *SequelTools* dentro do
-ambiente *mapping*
-
-    git clone https://github.com/ISUgenomics/SequelTools.git
-    cd SequelTools/Scripts
-    chmod +x *.sh *.py *.R
-    export PATH=$PATH:"$(pwd)"
-
-**5. Instalación BedTools v2.30.0**
-
-[BedTools](https://bedtools.readthedocs.io/en/latest/) es como una
-navaja suiza, es un conjunto de herramientas para una amplia gama de
-tareas en análisis genómicos. Por ejemplo, combinación de archivos,
-transformar archivos de un formato a otro, etc.
-
-Para instalar *BedTools* va a ser creado otro ambiente virtual, llamado
-*bioinfo*, donde van ser instalada lass herramientas para gestión de
-archivos y otras tareas “más simples”.
-
-    # Crea el ambiente
-    conda create -n bioinfo
-
-    # Activa el ambiente
-    conda activate bioinfo
-
-    # Instala BedTools
-    conda install -c bioconda bedtools
-
-**6. Instalación JellyFish v2.2.10**
-
-[JellyFish](https://github.com/gmarcais/Jellyfish/blob/master/doc/Readme.md)
-es una herramienta que realiza el conteo de k-mers en el DNA,
-permitiendo calcular el tamaño aproximado del genoma y el poercentaje de
-heterogocidad, entre otras métricas.
-
-Para instalar **JellyFish** será usado Conda y será instalado dentro del
-ambiente virtual **bioinfo**
-
-    # Si no está activado
-    conda activate bioinfo
-
-    # Instala Jellyfish
-    conda install -c bioconda jellyfish
-
-**7. Instalación Canu v2.1.1**
-
-[Canu](https://github.com/marbl/canu) es un ensamblador, diseñado
-especialmente para high-noise single-molecule sequencing, tales como
-*PacBio* o *Oxford Nanopore MinION*. Canu opera en tres fases:
-corrección, recorte y montaje. La fase de corrección mejorará la
-precisión de las bases en las lecturas. La fase de recorte recortará las
-lecturas en la parte que parezca ser una secuencia de alta calidad,
-eliminando las regiones sospechosas, como el adaptador SMRTbell
-restante. La fase de ensamblaje ordenará las lecturas en contigs,
-generará secuencias de consenso y creará gráficos de rutas alternativas.
-
-Para la instalación de Canu, primero será creado um ambiente virutal
-llamado *assembly*, dentro del cual serán instaladas las herramientas
-relacionadas con el ensamblaje de genomas.
-
-Siga las siguientes instrucciones para la creación del ambiente virtual
-y posterior instalación de **Canu**
-
-    # Cree el ambiente virtual
-    conda create -n assembly
-
-    # Active el ambiente virtual
-    conda activate assembly
-
-    # Instale Canu
-    conda install -c bioconda canu
-
-**8. Instalación Quast v5.0.2**
-
-[Quast](http://quast.sourceforge.net/docs/manual.html) (*QUality
-ASsesment Tool*) es una herramienta para evaluar la calidad de genomas
-ensamblados calculando diversas métricas (tamaño de los contigs, número
-de contigs, N50, L50, etc)
-
-    # Active el ambiente bioinfo
-    conda activate bioinfo
-
-    # Instale Quast
-    conda install -c bioconda quast
-
-**9.Instalación BUSCO v5.2.2**
-
-[BUSCO](https://busco.ezlab.org/busco_userguide.html) es un porgrama que
-usa como base la filogenómica y los genes ortólogos para crear conjunto
-de genes por linajes, los cuales usa como base de datos para comparar
-contra genomas montados y calcular la completeza y contaminación del
-genoma estudiado.
-
-Por problemas de compatibilidad de la versión de *Python* usada por este
-programa, es mejor instalarlo en un ambiente virutal separado.
-
-    # Crea el ambiente virtual e instala Busco
-    conda create -n busco -c conda-forge -c bioconda busco=5.2.2
-
-**10. Instalación MaSuRCA Toolkit v4.0.5**
-
-[MaSuRCA](https://github.com/alekseyzimin/masurca) (*Maryland Super Read
-Cabog Assembler*) es un conjunto de herramientas (*toolkit* ) entre las
-que están, *MaSuRCA genome assembler*, *QuORUM error corrector*, *POLCA
-genome polishing*, *Chromosome scaffolder*, *Jellyfish kmer counter*, y
-*MUMmer aligner*. Por ahora usaremos especialmente **POLCA** para la
-etapa de *Polishing*. **POLCA** es una herramienta de pulido destinada a
-mejorar la precisión del consenso en conjuntos de genomas producidos a
-partir de secuencias largas usando PacBio SMRT o Oxford Nanopore.
-**POLCA** utiliza lecturas Illumina o PacBio HIFI para el mismo genoma
-para mejorar la calidad de consenso del ensamblaje. Sus entradas son la
-secuencias del genoma y un archivo (o archivos) fasta o fastq de las
-lecturas de Illumina o PacBioHIFI y sus salidas son el genoma pulido y
-un archivo VCF con las variantes llamadas a partir de los datos leídos.
-
-    # Cree un ambiente llamado masurca
-    conda create -n masurca
-
-    # Active el nuevo ambiente
-    conda activate masurca
-
-    # Instale MaSuRCA
-    conda install -c bioconda masurca
-
-**11. Instalación BWA**
-
-[BWA](http://bio-bwa.sourceforge.net/bwa.shtml) es un alineador de
-secuencias. Será instalado como dependencia para **POLCA**.
-
-    # Si no está activado
-    conda activate masurca
-
-    # instale BWA
-    conda install -c bioconda bwa
-
-**12. Instalación Spades v3.15.3**
-
-[Spades](https://github.com/ablab/spades) es un ensamblador de genomas,
-que puede ser usado tanto para lecturas cortas como largas.
-
-Siga las siguientes instrucciones para la instalación de **Spades**
-dentro do ambiente virtual *assmebly*.
-
-    # Active el ambiente virtual
-    conda activate assembly
-
-    # Instale Spades
-    conda install -c bioconda spades
-
-Ahora usted tiene tres ambientes: `quality`, `bioinfo` , `masurca` y
-`assembly`. En el primero, ud tiene instaladas los programas FastQC y
-Trimmomatic, en el segundo herramientas útiles para gestión de archivos,
-y en el tercero los ensambladores Canu y Spades.
-
-Ud puede pasar de un ambiente a otro usando el siguiente comando:
-
-    # Activa el ambiente quality
-    conda activate quality
-
-    # Activa el ambiente assembly
-    conda activate assembly
-
-**9. Instalación Quast v5.0.2**
-
-Quast (*Quality Assessment Tool for Genome Assemblies*), como su nombre
-lo indica es una herramienta para evaluar la calidad de las montajes de
-genomas.
-
-Instale esta herramienta dentro del ambiente bionfo.
-
-    # Activa el ambiente bioinfo
-    conda activate bioinfo
-
-    # Instala Quast
-    conda install -c bioconda quast
+bioinformáticas que serán usadas. Los comandos de instalación serán
+presentados a medida que las herramientas van a ser usadas.
 
 ------------------------------------------------------------------------
 
@@ -344,12 +87,53 @@ que para este caso es: `cpalmiol/`
 
 ## 1. Control de Calidad
 
-### 1.1. FastQC
+## 1.1. Evaluación de la calidad
 
-**Illumina** La primera etapa del proceso es la evaluación de la calidad
-de las secuencias cortas (Illumina paired end) usando *FastQC*, con el
-objetivo de determinar sí es necesario trimar o filtrar las secuencias
-de baja calidad en los próximos pasos.
+Para la evaluación de la calidad será usado el programa
+[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) que
+es una herramienta que permite observar graficamente la calidad de las
+secuencias de Illumina.
+
+### 1.1.1. Instalación
+
+Las instrucciones para instalación usando conda se encuentran
+[aqui](https://anaconda.org/bioconda/fastqc). Sin embargo aqui en este
+tutorial también serán presentadas
+
+Como ya fue explicado anteriorimente, con conda es posible crear
+ambientes virutuales para instalar las herramientas bioinformáticas. El
+primer ambiente que será creado se llamará **quality**, donde se
+instalaran los programas relacionados con este proceso.
+
+    conda create -n quality
+
+Durante el proceso, el sistema preguntará sí desea proceder con la
+creación del ambiente, con las opciones y/n (si o no). Escriba `y` y
+después de eso el ambiente virtual estará creado.
+
+Para instalar las herramientas dentro del ambiente anteriormente creado,
+es necesario activarlo
+
+    conda activate quality
+
+El ambiente estará activo cuando el nombre de éste se encuentra en el
+comienzo de la linea de comando, así: `(quality) user@server:~/$`.
+
+Posteriormente se procede a la instalación del programa:
+
+    conda install -c bioconda fastqc
+
+De nuevo será cuestionado si desea continuar con el proceso o no.
+Escriba `y`.
+
+### 1.1.2. Uso
+
+**Illumina**
+
+La primera etapa del proceso es la evaluación de la calidad de las
+secuencias cortas (Illumina paired end) usando *FastQC*, con el objetivo
+de determinar sí es necesario trimar o filtrar las secuencias de baja
+calidad en los próximos pasos.
 
 Ésta etapa es para identificar principalmente las secuencias *outlier*
 con baja calidad (*Q* &lt; 20).
@@ -371,7 +155,7 @@ Corra **FastQC**:
     ## Run usando 10 threads
     fastqc -t 10 00.RawData/02.Illumina/* -o 01.FastqcReports/
 
-**Sintaxis** fastqc \[opciones\] input -o output
+**Sintaxis** `fastqc [opciones] input -o output`
 
 El comando `fastqc` tiene varias opciones o parametros, entre ellas,
 escoger el número de núcleos de la máquina para correr el análisis, para
@@ -410,6 +194,48 @@ Es normal que el pair 2 presente una calidad un poco inferior al pair 1.
 
 **PacBio**
 
+Para la evaluación de la calidad de las secuencias de PacBio será usado
+el kit de herramienta Sequel Tools.
+
+**Instalación SequelTools**
+
+Sequeltools es un programa que provee una colección de tres heramientas
+para trabajar con secuencias de PacBio. Las herramientas son: *Quality
+Control (QC) tool*, *Read Subsampling tool* y *Read Filtering tool*. La
+herramienta *QC* produce múltiples estadísticas y gráficos describiendo
+la calidad de los datos, inclueyendo N50, tamaño y cantidad de las
+lecturas, entre otras. *Read Subsampling tool* sirve para filtrar las
+secuencias usando algún critério, como por ejemplo las *subreads* más
+largas.
+
+SequelTools no está dentro de conda, por lo que será instalado de manera
+diferente. Sin embargo, primero va a ser creado un ambiente virtual
+llamado *quality*, donde se instalarán herramientas relacionadas con la
+manipulación de secuencias de PacBio. SequelTools necesita algunas
+dependencias para funcionar, com *SamTools*, *Python* y *R*. Para
+usuarios de Linux, no es necesario instalar *Python* ni *R* pues vienen
+pre instaladas. *SamTools* será instalado dentro del ambiente virtual
+*quality*.
+
+    # Crea el ambiente 
+    conda create -n quality
+
+    # Activa el ambiente
+    conda activate quality
+
+    # Instala SamTools
+    conda install -c bioconda samtools
+
+A continuación los comandos para la instalacion *SequelTools* dentro do
+ambiente *quality*
+
+    git clone https://github.com/ISUgenomics/SequelTools.git
+    cd SequelTools/Scripts
+    chmod +x *.sh *.py *.R
+    export PATH=$PATH:"$(pwd)"
+
+**Uso**
+
 Los archivos de la secuenciación hecha por PacBio están comprimidos
 dentro de un archivo `.zip`, por lo tanto el primer paso es
 descomprimirlos.
@@ -419,7 +245,7 @@ descomprimirlos.
     # Descomprime
     unzip Cpalmiol_rawdata1.zip
 
-El comando `unzip` vai descomprimir el archivo `Cpalmiol_rawdata1.zip`
+El comando `unzip` va a descomprimir el archivo `Cpalmiol_rawdata1.zip`
 generando un directorio llamado `Cpalmiol` donde se encuentran varios
 archivos, entre ellos, las secuencias en formato `subreads.fasta` y
 `subreads.bam`. Para organizar mejor los directorios, pase todos los
@@ -466,16 +292,33 @@ N50
 </tbody>
 </table>
 
-### 1.2. Trimmomatic
+### 1.2. Depuración/*Trimming*
 
 Según fue evaluado en el control de calidad, será necesario filtrar
 algunas lecturas con una calidad un poco por debajo de lo necesario.
+Para esta etapa será usado o programa [Trimmomatic
+v0.39](http://www.usadellab.org/cms/?page=trimmomatic) que permite
+filtrar (remover) lecturas o *reads* cortas de baja calidad.
 
-El programa Trimmomatic tiene vários parametros que pueden ser
-considerados para filtrar lecturas con baja calidad. Aqui usaremos
-algunos. Si quiere saber que otros parametros y como funciona cada uno
-de ellos, consulte el
+Trimmomatic tiene vários parametros que pueden ser considerados para
+filtrar lecturas con baja calidad. Aqui usaremos algunos. Si quiere
+saber que otros parametros y como funciona cada uno de ellos, consulte
+el
 [manual](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf).
+
+### 1.2.1. Instalación
+
+Como se trata de una herramienta que participa dentro del proceso de
+control de calidad, será instalada dentro del ambiente virtual
+**quality**
+
+    # Si no está activado el ambiente
+    conda activate quality
+
+    # Instale Trimmomatic
+    conda install -c bioconda trimmomatic
+
+### 1.2.2. Uso
 
 Para los datos aqui analizados se usará la siguiente linea de comando:
 
@@ -529,9 +372,26 @@ Score&gt;30. Después del proceso de filtrado sobrevivieron 20′166.545
 
 Este análisis es realizado con el objetivo de determinar el tamaño
 aproximado del genoma (**importantísimo para el ensamblaje**) y el grado
-de *heterogocidad*. Será usada la herramienta **Jellyfish** para el
-cálculo de las métricas y la plataforma online [Genome
+de *heterogocidad*. Será usada la herramienta [JellyFish
+v2.2.10](https://github.com/gmarcais/Jellyfish/blob/master/doc/Readme.md)
+para el cálculo de las métricas y la plataforma online [Genome
 Scope](http://qb.cshl.edu/genomescope/) para graficar los resultados.
+
+### 1.3.1. Instalación
+
+Para instalar **JellyFish** será usado Conda y será instalado dentro de
+un ambiente virtual llamado **bioinfo**
+
+    # Cree el ambiente
+    conda create -n bioinfo
+
+    # Active el ambiente
+    conda activate bioinfo
+
+    # Instala Jellyfish
+    conda install -c bioconda jellyfish
+
+### 1.3.2. Uso
 
 El análisis será realizado usando como longitud de k-mer 21, que es un
 tamaño suficientemente largo como para que la mayoria de los k-mers no
@@ -604,7 +464,7 @@ Con el secuenciamiento PacBio tenemos:
 
     #> [1] "La cobertura con PacBio es de 725x"
 
-## 2. Ensamblaje
+## 2. Montaje del Genoma de *C. palmioleophila*
 
 El ensamblaje del genoma es la etapa más importante del proceso, porque
 el resto de pasos para adelante dependen de que el genoma quede montado
@@ -612,12 +472,33 @@ lo “más parecido posible” con la realidad. Por esta razón, serán
 testados varios montadores y parametros, para comparar cada ensamblaje y
 decidir cual es el mejor para los siguientes procesos.
 
-### 2.1. Conversión de archivos
+### 2.1. Conversión de archivos (opcional)
 
-Debido a que las secuencias de *PacBio* no están en formato `.fastq` es
-necesario transformar los archivos `.bam`, para esto va a ser usado
-BedTools, más exactamente la utilidad `bamtofastq`. Recuerde que
-*BedTools* fue instalado dentro del ambiente virtual `bioinfo`
+A continuación se encuentra el proceso de conversión del archivo de
+secuencias de PacBio `.bam` para `.fastq` usando [BedTools
+v2.30.0](https://bedtools.readthedocs.io/en/latest/) , más exactamente
+la utilidad `bamtofastq`. (Nota: las secuencias `.fasta` ya están
+disponibles en el directorio)
+
+### 2.1.1 Instalación
+
+[BedTools](https://bedtools.readthedocs.io/en/latest/) funciona como una
+navaja suiza, es un conjunto de herramientas para una amplia gama de
+tareas en análisis genómicos. Por ejemplo, combinación de archivos,
+transformar archivos de un formato a otro, etc.
+
+Instale BedTools dentro del ambiente **bioinfo**.
+
+    # Activa el ambiente
+    conda activate bioinfo
+
+    # Instala BedTools
+    conda install -c bioconda bedtools
+
+### 2.1.2 Uso
+
+Recuerde que *BedTools* fue instalado dentro del ambiente virtual
+`bioinfo`
 
     # Activa el ambiente
     conda activate bioinfo
@@ -628,13 +509,60 @@ BedTools, más exactamente la utilidad `bamtofastq`. Recuerde que
     # Confirme que el archivo fue creado
     ls 00.RawData/01.PacBio/Cpalmiol_PB.fq
 
-### 2.2. Canu
+|                                             |
+|---------------------------------------------|
+| WORKFLOW                                    |
+| <img src="docs/imgs/montaje.png" width=90%> |
 
-Además de ensamblar las secuencias, Canu, también va a corregir y a
-trimarlas. Ahora que tenemos las secuencias en formato `.fq`, podemos
-correr Canu para el ensamblaje.
+### 2.2. Correción de errores (opcional)
 
-**Nota:** Este proceso demora aproximadamente \~14h.
+Opcionalmente las secuencias largas pueden ser corregidas con las
+secuencias cortas, usando la herramienta
+[FMLRC](https://github.com/holtjma/fmlrc). Sin embargo, para este
+pipeline no será abordado esta etapa debido a que la cobertura de las
+secuencias de PacBio está muy alta y serán “auto-corregidas” con los
+montadores.
+
+### 2.3. Método de Ensamblaje 1
+
+El primer método comprende, el montaje de las secuencias PacBio sin
+corregir usando [Canu v2.1.1](https://github.com/marbl/canu).
+
+[Canu v2.2.1](https://github.com/marbl/canu) es un ensamblador, diseñado
+especialmente para high-noise single-molecule sequencing, tales como
+*PacBio* o *Oxford Nanopore MinION*. Canu opera en tres fases:
+corrección, recorte y montaje. La fase de corrección mejorará la
+precisión de las bases en las lecturas. La fase de recorte recortará las
+lecturas en la parte que parezca ser una secuencia de alta calidad,
+eliminando las regiones sospechosas, como el adaptador SMRTbell
+restante. La fase de ensamblaje usa el algoritmo
+*Overlap-Layaout-Consensus* ordenando las lecturas en contigs, generando
+secuencias de consenso y creando gráficos de rutas alternativas.
+
+### 2.3.1. Instalación
+
+Para la instalación de Canu, primero será creado um ambiente virutal
+llamado *assembly*, dentro del cual serán instaladas las herramientas
+relacionadas con el ensamblaje de genomas.
+
+Siga las siguientes instrucciones para la creación del ambiente virtual
+y posterior instalación de **Canu**
+
+    # Cree el ambiente virtual
+    conda create -n assembly
+
+    # Active el ambiente virtual
+    conda activate assembly
+
+    # Instale Canu
+    conda install -c bioconda canu
+
+### 2.3.2. Uso
+
+Para el montaje, serán usadas las secuencias PacBio en formato `.fasta`,
+sin embargo, pueden ser usadas también en formato `.fq` (ver 2.1.
+Conversión de archivos) **Nota:** Este proceso demora aproximadamente
+\~14h.
 
     # Cria um directorio nuevo para el resultado de Canu
     mkdir 05.Assemblies
@@ -645,7 +573,7 @@ correr Canu para el ensamblaje.
     canu -p canu -d 05.Assemblies/01.Canu genomeSize=12.6m -maxMemory=25g -maxThreads=15 utgOvlErrorRate=0.065 trimReadsCoverage=2 trimReadsOverlap=500 -pacbio-raw 00.RawData/01.PacBio/Cpalmiol_subreads.fasta
 
 **Sintaxis**
-`canu -p prefix -d path/to/output genomeSize=x corThreads=x -pacbio-raw path/to/sequences/file.fq`
+`canu -p prefix -d path/to/output genomeSize=x corThreads=x -pacbio-raw path/to/sequences/file.fa`
 
 El comando es `canu`. El parametro `-p canu` indica al programa que
 prefijo usar para todos los archivos de salida.
@@ -696,31 +624,249 @@ cobertura es menor que 30*x*. \* Entre outros parámetros, para más
 información consulte
 [aqui](https://canu.readthedocs.io/en/latest/parameter-reference.html)
 
-### 2.3.1. Calidad del montaje
+### 2.4. Método 2
 
-Para evaluar la calidad del montaje, serán usadas dos herramientas,
+En el segundo método, se aborda la obtención de un ensamble híbrido,
+usando los dos tipos de secuencias. Opcionalmente pueden ser usadas las
+secuencias no pareadas (secuencias “descartadas” por Trimmomatic) y/o el
+genoma final del método 1. El montador usado en este método será
+[Spades](https://github.com/ablab/spades).
+
+### 2.4.1. Instalación
+
+[Spades v3.15.3](https://github.com/ablab/spades) es uno de los
+ensambladores de genomas, más conocido y con mejores resultados, y puede
+ser usado tanto para lecturas cortas como largas. Lea atentamente el
+[manual](http://cab.spbu.ru/files/release3.15.2/manual.html), ya que
+este programa tiene muchas opciones diferentes. Spades usa el algoritmo
+del *Grafo de Bruijn* para el montaje de las secuencias.
+
+Siga las siguientes instrucciones para la instalación de **Spades**
+dentro do ambiente virtual *assembly*.
+
+    # Active el ambiente virtual
+    conda activate assembly
+
+    # Instale Spades
+    conda install -c bioconda spades
+
+### 2.4.2 Uso
+
+Para este montaje serán usadas las secuencias limpias Illumina (pair1 y
+pair2), las secuencias no pareadas y las secuencias no corregidas de
+PacBio. Para este ejemplo no será usado ningún montaje anterior.
+
+Antes de rodar el comando de Spades, es necesario concatenar las
+secuencias no pareadas, ya que solo es posible usar un archivo único.
+Usando el comando `cat` es posible unir dos archivos y salvar el
+resultado en un nuevo archivo
+
+`cat unpaired/Cpalmiol_1_unpaired.fastq.gz unpaired/Cpalmiol_2_unpaired.fastq.gz > unpaired/Cpalmiol_unpaired.fastq.gz`
+
+Corra el programa Spades
+
+    # Cree un directorio para el output
+    mkdir 05.Assemblies/02.Spades
+
+    # Spades
+    spades.py --isolate -t 15 -m 30 -1 02.CleanData/Cpalmiol_1_paired.fastq -2 02.CleanData/Cpalmiol_2_paired.fastq -s unpaired/Cpalmiol_unpaired.fastq.gz --pacbio 00.RawData/01.PacBio/Cpalmiol_subreads.fasta.gz -o 05.Assemblies/02.Spades
+
+**Sintaxis** `spades.py [options] -o output_dir`
+
+-   `--isolate`: Esta flag es recomendado cuando se trata de un aislado
+    con alta cobertura de secuenciación. Mejora el montaje y el tiempo
+    de corrida.
+
+-   `t`: Número de threads
+
+-   `-m`: Cantidad en gigas de moemoria para el proceso.
+
+-   `-1`: Secuencias cortas, pair 1
+
+-   `-2`: Secuencias cortas, pair 2
+
+-   `-s`: Secuencias no pareadas
+
+-   `--pacbio`: Secuencias PacBio
+
+-   `-o`: Directorio de salida
+
+Para conocer los demás parámetros del comando que no fueran modificados
+(usados por *default*), consulte el
+[manual](http://cab.spbu.ru/files/release3.15.2/manual.html).
+
+-   `05.Assemblies/02.Spades/corrected/`: contiene las reads corregidas
+    por **BayesHammer** en `.fastq.gz`
+
+-   `05.Assemblies/02.Spades/scaffolds.fasta`: contiene los scaffolds
+    obtenidos
+
+-   `05.Assemblies/02.Spades/contigs.fasta`: contiene los contigis
+    obtenidos
+
+-   `05.Assemblies/02.Spades/assembly_graph_with_scaffolds.gfa`:
+    contiene el grafo del montaje en formato GFA 1.0.
+
+-   `05.Assemblies/02.Spades/assembly_graph.fastg`: contiene el grafo
+    del montaje en formato FASTG
+
+## 3. Polishing
+
+En esta etapa serán usadas las secuencias cortas de Illumina con el fin
+de corregir errores en el genoma montado. Para esto será usado el
+programa **Polca** ([MaSuRCA
+toolkit](https://github.com/alekseyzimin/masurca)) que en la primera
+etapa realiza un alineamiento de las secuencias cortas en el montaje
+inicial, usando [BWA](http://bio-bwa.sourceforge.net/bwa.shtml) para
+este fin. Posteriormente, usando el alineamiento el programa procederá a
+corregir pequeños indels, gaps, montajes errados, etc.
+
+### 3.1. Instalación
+
+[MaSuRCA v4.0.5](https://github.com/alekseyzimin/masurca) (*Maryland
+Super Read Cabog Assembler*) es un conjunto de herramientas (*toolkit* )
+entre las que están, *MaSuRCA genome assembler*, *QuORUM error
+corrector*, *POLCA genome polishing*, *Chromosome scaffolder*,
+*Jellyfish kmer counter*, y *MUMmer aligner*. Por ahora usaremos
+especialmente **POLCA** para la etapa de *Polishing*. **POLCA** es una
+herramienta de pulido destinada a mejorar la precisión del consenso en
+conjuntos de genomas producidos a partir de secuencias largas usando
+PacBio SMRT o Oxford Nanopore. **POLCA** utiliza lecturas Illumina o
+PacBio HIFI para el mismo genoma para mejorar la calidad de consenso del
+ensamblaje. Sus entradas son la secuencias del genoma y un archivo (o
+archivos) fasta o fastq de las lecturas de Illumina o PacBioHIFI y sus
+salidas son el genoma pulido y un archivo VCF con las variantes llamadas
+a partir de los datos leídos.
+
+    # Cree un ambiente llamado masurca
+    conda create -n masurca
+
+    # Active el nuevo ambiente
+    conda activate masurca
+
+    # Instale MaSuRCA
+    conda install -c bioconda masurca
+
+[BWA v0.7.17](http://bio-bwa.sourceforge.net/bwa.shtml) es un alineador
+de secuencias. Será instalado como dependencia para **POLCA**.
+
+    # instale BWA
+    conda install -c bioconda bwa
+
+### 3.2. Uso
+
+El programa **Polca** realiza todo el proceso con una sola linea de
+comando.
+
+    ## Activa el ambiente masurca
+    conda activate masurca
+
+    ## Cree un directorio para el output
+    mkdir 06.Polishing
+    mkdir 06.Polishing/01.Canu
+    mkdir 06.Polishing/02.Spades
+
+    # Entre al nuevo directorio del método 1
+    cd 06.Polishing/01.Canu
+
+Corra Polca
+
+    ## Montaje método 1
+    polca.sh -a ../../05.Assemblies/01.Canu/canu.contigs.fasta -r '../../02.CleanData/Cpalmiol_1_paired.fastq ../../02.CleanData/Cpalmiol_2_paired.fastq' -t 15 -m 1G
+
+    # Cambie el nombre del nuevo genoma mejorado
+    mv canu.contigs.fasta.polished.fasta genome1_polished.fa
+
+    # Entre al nuevo directorio del método 2
+    cd ../02.Spades
+
+    ## Montaje método 2
+
+    polca.sh -a ../../05.Assemblies/02.Spades/scaffolds.fasta -r '../../02.CleanData/Cpalmiol_1_paired.fastq ../../02.CleanData/Cpalmiol_2_paired.fastq' -t 15 -m 1G
+
+    # Cambie el nombre del nuevo genoma mejorado
+    mv scaffolds.fasta.polished.fasta genome2_polished.fa
+
+Para facilitar, cambie los nombres de los archivos de los nuevos genomas
+mejorados
+
+**Sintaxis**
+
+`polca.sh -a genome.fasta -r 'reads1.fastq reads2.fastq' -t [núm threads] -m [gigas de memoria]`
+
+-   `-a`: Genoma montado
+-   `-r`: reads cortas
+-   `-t`: Número de núcleos/threads
+-   `-m`: Gigas de memoria por thread para samtools
+
+**Outputs**
+
+Polca va a generar una serie de archivos relacionados al mapeo de las
+secuencias cortas en el montaje. Los dos *outputs* más importantes son
+`*.contigs.fasta.report` y `*.contigs.fasta.PolcaCorrected.fa`. En el
+primero se encuentran las estadísticas básicas del proceso y el segundo
+es el genoma mejorado.
+
+`less canu.contigs.fasta.report`
+
+    Substitution Errors: 31
+    Insertion/Deletion Errors: 56
+    Assembly Size: 13394208
+    Consensus Quality: 99.9994
+
+`less scaffold.fasta.report`
+
+    Substitution Errors: 
+    Insertion/Deletion Errors: 
+    Assembly Size: 
+    Consensus Quality: 
+
+Se puede observar que para el método de ensamblaje 1, fueron corregidos
+31 errores de substitución, 56 de inserción o deleción y que la calidad
+consenso del genoma es 99.99%. En cuanto que para el método 2…
+
+## 4. Calidad de los montajes
+
+Para evaluar la calidad de los montajes, serán usadas dos herramientas,
 **Quast** y **Busco**.
 
-**Quast**
+### 4.1. Quast
 
-Con **Quast** es posible evaluar las principales estadísticas del
+[Quast v5.0.2](http://quast.sourceforge.net/docs/manual.html) (*QUality
+ASsesment Tool*) es posible evaluar las principales estadísticas del
 montaje (i.e. N50, número de contigs, tamaño total del montaje, tamaño
 de los contigs, etc). **Quast** genera una serie de archivos y reportes
-donde es posible observar esas estadísticas básicas del montaje. También
-permite comparar entre varios montajes con el objetivo de escoger el
-mejor.
+donde es posible observar esas estadísticas básicas del montaje. Serán
+comparados los montajes antes y después de la etapa de *polishing* de
+los métodos de ensamblaje, con el objetivo de escoger el mejor, para las
+siguientes etapas.
+
+### 4.1.1. Instalación
+
+    # Active el ambiente bioinfo
+    conda activate bioinfo
+
+    # Instale Quast
+    conda install -c bioconda quast
+
+### 4.1.2. Uso
+
+    ## Vuelva al diretorio base
+
+    cd ../../
 
     # Active el ambiente bioinfo
     conda activate bioinfo
 
     # Crie um diretório para el output
-    mkdir 06.AssemblyQuality
-    mkdir 06.AssemblyQuality/01.Canu
-    mkdir 06.AssemblyQuality/01.Canu/01.Quast
-    # Corra Quast
-    quast.py 05.Assemblies/01.Canu/canu.contigs.fasta -o 06.AssemblyQuality/01.Canu/01.Quast
+    mkdir 07.AssemblyQuality
+    mkdir 07.AssemblyQuality/01.Quast
 
-**Sintaxis** `quast.py path/to/assembly/contigs.fast -o path/to/output/`
+    # Corra Quast
+    quast.py 05.Assemblies/01.Canu/canu.contigs.fasta 05.Assemblies/02.Spades/scaffolds.fasta 06.Polishing/01.Canu/genome1_polished.fa 06.Polishing/02.Spades/genome2_polished.fa -o 07.AssemblyQuality/01.Quast
+
+**Sintaxis**
+`quast.py path/to/assembly/contigs.fasta -o path/to/output/`
 
 **Interpetación de los resultados**
 
@@ -735,42 +881,60 @@ sea. Así mismo, es ideal menor número de gaps y Ns.
 
 Explore el directorio de output usando el comando `ls`.
 
--   `report.html`: Este reporte puede ser abierto en un *web browser* y
-    contiene las informaciones más relevantes. Como número de contigs,
-    tamaño del mayor contig, tamaño total del montaje, N50, etc.
+-   `07.AssemblyQuality/01.Quast/report.html`: Este reporte puede ser
+    abierto en un *web browser* y contiene las informaciones más
+    relevantes. Como número de contigs, tamaño del mayor contig, tamaño
+    total del montaje, N50, etc.
 
 <img src="imgs/report_quast.png" align="center" width = "100%"/>
 
--   `report.tex`, `report.txt`, `report.tsv`, `report.pdf`: es el mismo
-    reporte pero en diferentes formatos.
+-   `07.AssemblyQuality/01.Quast/report.tex`,
+    `07.AssemblyQuality/01.Quast/report.txt`,
+    `07.AssemblyQuality/01.Quast/report.tsv`,
+    `07.AssemblyQuality/01.Quast/report.pdf`: es el mismo reporte pero
+    en diferentes formatos.
 
--   `transposed_report.tsv`, `transposed_report.tex`,
-    `transposed_report.tex`: También es el reporte pero con otro formato
-    de las tablas.
+-   `07.AssemblyQuality/01.Quast/transposed_report.tsv`,
+    `07.AssemblyQuality/01.Quast/transposed_report.tex`,
+    `07.AssemblyQuality/01.Quast/transposed_report.tex`: También es el
+    reporte pero con otro formato de las tablas.
 
--   `icarus_viewers/contig_size_viewer.html`: Aqui puede ver
-    graficamente los contigs.
+-   `07.AssemblyQuality/01.Quast/icarus_viewers/contig_size_viewer.html`:
+    Aqui puede ver graficamente los contigs.
 
--   `basis_stats/`: Dentro de esta carpeta se encuentran varios gráficos
-    en formato `.pdf`.
+-   `07.AssemblyQuality/01.Quast/basis_stats/`: Dentro de esta carpeta
+    se encuentran varios gráficos en formato `.pdf`.
 
-**Nota: Es posible correr el montaje de nuevo con otros parámetros para
-comparar y escoger el mejor, según las métricas de evaluación de la
-calidad del montaje**
+## 4.2. Busco
 
-**Busco**
+[BUSCO](https://busco.ezlab.org/busco_userguide.html) está baseado en
+las expectativas evolutivas del contenido de genes ortólogos de copia
+única. Es decir, con esta herramienta podemos evaluar que tan completo
+está el genoma, teniendo en cuenta los genes de copia única y así mismo
+que tan contaminado está si estos genes son encontrados más de una vez
+en el genoma. Para esto es usado un conjunto de genes encontrados en
+linajes relacionadas al genoma en estudio. Para nuestro caso, será usado
+el conjunto de genes de la clase Saccharomycetes.
 
-Este programa está baseado en las expectativas evolutidas del contenido
-de genes ortólogos de copia única. Es decir, con esta herramienta
-podemos evaluar que tan completo está el genoma, teniendo en cuenta los
-genes de copia única y así mismo que tan contaminado está si estos genes
-son encontrados más de una vez en el genoma. Para esto es usado un
-conjunto de genes encontrados en linajes relacionadas al genoma en
-estudio. Para nuestro caso, será usado el conjunto de genes de la clase
-Saccharomycetes.
+### 4.2.1. Instalación
 
-    # Entre a la carpeta 06.AssemblyQuality/01.Canu
-    cd 06.AssemblyQuality/01.Canu/
+Por problemas de compatibilidad de la versión de *Python* usada por este
+programa, es mejor instalarlo en un ambiente virtual separado.
+
+    # Crea el ambiente virtual e instala Busco
+    conda create -n busco -c conda-forge -c bioconda busco=5.2.2
+
+### 4.2.2. Uso
+
+    # Entre a la carpeta 07.AssemblyQuality
+    cd 07.AssemblyQuality/
+
+
+    ## Cree directorios para cada genoma a evaluar
+    mkdir 02.Busco
+
+    cd 02.Busco/
+
 
     # Activa el ambiente busco
     conda activate busco
@@ -778,8 +942,17 @@ Saccharomycetes.
 Antes de correr el análisis en BUSCO, explore las opciones en el menú de
 ayuda, con `busco -h`.
 
-    # Busco
-    busco -m genome -i ../../../05.Assemblies/01.Canu/canu.contigs.fasta -o 02.Busco -l saccharomycetes_odb10 -c 15
+    # Busco para CanuNoPolished
+    busco -m genome -i ../../05.Assemblies/01.Canu/canu.contigs.fasta -o CanuNoPolished -l saccharomycetes_odb10 -c 15
+
+    # Busco para SpadesNoPolished
+    busco -m genome -i ../../05.Assemblies/01.Canu/canu.contigs.fasta -o SpadesNoPolished -l saccharomycetes_odb10 -c 15
+
+    # Busco para CanuPolished
+    busco -m genome -i ../../05.Assemblies/01.Canu/canu.contigs.fasta -o CanuPolished -l saccharomycetes_odb10 -c 15
+
+    # Busco para SpadesPolished
+    busco -m genome -i ../../05.Assemblies/01.Canu/canu.contigs.fasta -o SpadesPolished -l saccharomycetes_odb10 -c 15
 
 **Sintaxis**
 
@@ -811,194 +984,59 @@ un ensamblaje quimérico de haplotipos (técnico).
 
 **outputs**
 
--   `run_saccharomycetes_odb10/busco_sequences`: dentro de esta carpeta
-    se encuentran las secuencias en formato `.fasta` de los BUSCOs
-    **fragmented** (`fragmented_busco_sequences/`), *multi-copy*,
+-   `*/run_saccharomycetes_odb10/busco_sequences`: dentro de esta
+    carpeta se encuentran las secuencias en formato `.fasta` de los
+    BUSCOs **fragmented** (`fragmented_busco_sequences/`), *multi-copy*,
     (`multi_copy_busco_sequences/`), *single-copy*
     (`single_copy_busco_sequences/`).
 
--   `run_saccharomycetes_odb10/short_summary.txt`: Es un archivo de
+-   `*/run_saccharomycetes_odb10/short_summary.txt`: Es un archivo de
     texto plano que contine el resumen de los resultados de BUSCO. Aqui
     se encuentra el resultado final, es decir, el número y porcentaje de
     BUSCOs completos, single-copy, duplicados, fragmentados y missing.
 
-<!-- -->
-
-    ***** Results: *****
-
-        C:99.6%[S:99.4%,D:0.2%],F:0.1%,M:0.3%,n:2137       
-        2129    Complete BUSCOs (C)            
-        2124    Complete and single-copy BUSCOs (S)    
-        5   Complete and duplicated BUSCOs (D)     
-        2   Fragmented BUSCOs (F)              
-        6   Missing BUSCOs (M)             
-        2137    Total BUSCO groups searched
-
--   `run_saccharomycetes_odb10/full_table.tsv`: Es una tabla con los
+-   `*/un_saccharomycetes_odb10/full_table.tsv`: Es una tabla con los
     resultados completos, con *scores* y tamaños de los BUSCOs
     encontrados, además de las coordinadas dentro del genoma.
 
--   `run_saccharomycetes_odb10/missing_busco_list.tsv`: Contiene la
+-   `*/run_saccharomycetes_odb10/missing_busco_list.tsv`: Contiene la
     lista de *missing BUSCOs*.
 
--   `run_saccharomycetes_odb10/hmmer_output/`: tablas con la salida de
+-   `*/run_saccharomycetes_odb10/hmmer_output/`: tablas con la salida de
     HMMER con las busquedas de BUSCOs HMMs.
 
--   `run_saccharomycetes_odb10/meaeuk_output/`: Resultados de la
+-   `*/run_saccharomycetes_odb10/meaeuk_output/`: Resultados de la
     predicción de genes con *Metaeuk*.
 
--   `busco_downloads/`: en este directorio está la base de datos que
+-   `*/busco_downloads/`: en este directorio está la base de datos que
     BUSCO descargó, según el linaja escogido, Saccharomycetes.
 
--   `logs/`: Aqui se encuentran los logs de cada programa usado durante
-    el processo, `busco.log`, `hmmsearch_err.log`, `hmmsearch_out.log`,
-    `metaeuk_err.log` y `metaeuk_out.log`.
+-   `*/logs/`: Aqui se encuentran los logs de cada programa usado
+    durante el processo, `busco.log`, `hmmsearch_err.log`,
+    `hmmsearch_out.log`, `metaeuk_err.log` y `metaeuk_out.log`.
 
 **Gráfico**
 
 Los desarrolladores de **Busco** disponibilizaron un script de
-**Python** y **R** para graficar los resultados. A continuación el
-comando para usarlo:
+**Python** y **R** para graficar los resultados. Para generar un gráfico
+con todos los resultados de los cuatro genomas evaluados siga los
+siguientes comandos, que tienen por objetivo recopliar los
+`short_summary.txt` de cada genoma:
 
-    python3 generate_plot.py -wd 02.Busco/
+    # Cree un directorio 
+    mkdir BUSCO_summaries
+
+    # copie los short_summary de cada genoma
+    cp CanuNoPolished/short_summary.specific.saccharomycetes_odb10.CanuNoPolished.txt BUSCO_summaries/.
+    cp SpadesNoPolished/short_summary.*.lineage_odb10.SpadesNoPolished.txt BUSCO_summaries/.
+    cp CanuPolished/short_summary.*.lineage_odb10.CanuPolished.txt BUSCO_summaries/.
+    cp SpadesPolished/short_summary.*.lineage_odb10.SpadesPolished.txt BUSCO_summaries/.
+
+Para generar el gráfico:
+
+    python3 generate_plot.py -wd BUSCO_summaries/
 
 Rapidamente será generado un gráfico de barras con el porcentaje de cada
 tipo de genes encontrados en el genoma.
 
 <img src="imgs/busco_figure.png" align="center" width="85%"/>
-
-## 3. Polishing
-
-En esta etapa serán usadas las secuencias cortas de Illumina con el fin
-de corregir errores en el genoma montado. En un primer paso serán
-alineadas estas secuencias en el genoma ensamblado con los programas
-**BWA**. Y en segunda instancia será usado **Polca** para corregir
-pequeños indels, gaps, montajes errados, etc.
-
-El programa **Polca** realiza todo el proceso con una sola linea de
-comando.
-
-    ## Activa el ambiente masurca
-    conda activate masurca
-
-    ## Vuelva al directorio base
-
-    cd ../../
-
-    ## Confirme 
-    pwd
-
-    ## Cree un directorio para el output
-    mkdir 08.Polishing
-
-    # Entre al nuevo directorio
-    cd 08.Polishing/
-
-Corra Polca
-
-    polca.sh -a ../05.Assemblies/01.Canu/canu.contigs.fasta -r '../02.CleanData/Cpalmiol_1_paired.fastq ../02.CleanData/Cpalmiol_2_paired.fastq' -t 15 -m 1G
-
-**Sintaxis**
-
-`polca.sh -a genome.fasta -r 'reads1.fastq reads2.fastq' -t [núm threads] -m [gigas de memoria]`
-
--   `-a`: Genoma montado
--   `-r`: reads cortas
--   `-t`: Número de núcleos/threads
--   `-m`: Gigas de memoria por thread para samtools
-
-**Outputs**
-
-Polca va a generar una serie de archivos relacionados al mapeo de las
-secuencias cortas en el montaje. Los dos *outputs* más importantes son
-`canu.contigs.fasta.report` y `canu.contigs.fasta.PolcaCorrected.fa`. En
-el primero se encuentran las estadísticas básicas del proceso y el
-segundo es el genoma mejorado.
-
-`less canu.contigs.fasta.report`
-
-    Substitution Errors: 31
-    Insertion/Deletion Errors: 56
-    Assembly Size: 13394208
-    Consensus Quality: 99.9994
-
-Se puede observar que fueron corregidos 31 errores de substitución, 56
-de inserción o deleción y que la calidad consenso del genoma es 99.99%.
-
-### 3.1. Calidad del montaje pulido
-
-Con el objetivo de evaluar las mejorías del genoma después del
-*polishing*, debe ser rodado nuevamente **Quast** y **Busco**.
-
-Primero para facilitar, cambie el nombre del archivo del genoma pulido
-`canu.contigs.fasta.PolcaCorrected.fa` para `genome_polished.fasta`
-usando el comando `mv`.
-
-**Quast**
-
-    # Vuelva para el directorio base
-    cd ../
-
-    # Active el ambiente bioinfo
-    conda activate bioinfo
-
-    # Crie um diretório para el output
-    mkdir 06.AssemblyQuality/02.PolishedGenome
-    mkdir 06.AssemblyQuality/02.PolishedGenome/01.Quast
-
-    # Corra Quast
-    quast.py 05.Assemblies/01.Canu/canu.contigs.fasta 07.Polishing/genome_polished.fasta  -o 06.AssemblyQuality/02.PolishedGenome/01.Quast
-
-Descargue el archivo `report.html`
-
-<img src="imgs/report_quast2.png" align="center" width="100%" />
-
-Observe que todas las métricas fueron mejoradas con el *polishing*.
-
-**BUSCO**
-
-    # Active el ambiente busco
-    conda activate busco
-
-    # Cree directorios para el output
-    mkdir 06.AssemblyQuality/02.PolishedGenome/02.Busco
-
-
-    # Entre al directorio 
-    cd 06.AssemblyQuality/02.PolishedGenome
-
-    busco -m genome -i ../../07.Polishing/genome_polished.fasta -o 02.Busco -l saccharomycetes_odb10 -c 15
-
-`nano 02.Busco/run_saccharomycetes_odb10/short_summary.txt`
-
-Resultado
-
-    ***** Results: *****
-
-            C:99.6%[S:99.4%,D:0.2%],F:0.1%,M:0.3%,n:2137
-            2129    Complete BUSCOs (C)
-            2124    Complete and single-copy BUSCOs (S)
-            5       Complete and duplicated BUSCOs (D)
-            2       Fragmented BUSCOs (F)
-            6       Missing BUSCOs (M)
-            2137    Total BUSCO groups searched
-
-**Gráfico**
-
-Crie el gráfico de barras con el resultado de Busco
-
-    python3 generate_plot.py -wd 02.Busco/
-
-<img src="imgs/busco_figure2.png" align="center" width="85%"/>
-
-En cuanto a completud y contaminación, no hubo cambios entre el genoma
-montado original y el pulido.
-
-### 2.3. Spades
-
-A diferencia de *Canu*, *Spades* fue diseñado para montar genomas con
-secuencias cortas (i.e Illumina), sin embargo el también puede hacer
-“montajes híbridas” combinando secuencias cortas e largas
-(i.e. Nanopore, PacBio).
-
-A continuación, se encuentra la línea de comando para correr Spades:
