@@ -510,12 +510,13 @@ Antes de rodar el comando de Spades, es necesario concatenar las secuencias no p
 `cat unpaired/Cpalmiol_1_unpaired.fastq.gz unpaired/Cpalmiol_2_unpaired.fastq.gz > unpaired/Cpalmiol_unpaired.fastq.gz`
 
 Corra el programa Spades
+
 ```
 # Cree un directorio para el output
 mkdir 05.Assemblies/02.Spades
 
 # Spades
-spades.py --isolate -t 15 -m 30 -1 02.CleanData/Cpalmiol_1_paired.fastq -2 02.CleanData/Cpalmiol_2_paired.fastq -s unpaired/Cpalmiol_unpaired.fastq.gz --pacbio 00.RawData/01.PacBio/Cpalmiol_subreads.fasta.gz -o 05.Assemblies/02.Spades
+spades.py -t 15 -m 30 -1 02.CleanData/Cpalmiol_1_paired.fastq -2 02.CleanData/Cpalmiol_2_paired.fastq -s unpaired/Cpalmiol_unpaired.fastq.gz --pacbio 00.RawData/01.PacBio/Cpalmiol_subreads.fasta.gz --trusted-contigs 06.Polishing/02.Spades/genome_polished.fa -o 05.Assemblies/02.Spades
 ```
 
 **Sintaxis**
@@ -589,6 +590,7 @@ mkdir 06.Polishing
 mkdir 06.Polishing/01.Canu
 mkdir 06.Polishing/02.Spades
 
+
 # Entre al nuevo directorio del método 1
 cd 06.Polishing/01.Canu
 ```
@@ -608,7 +610,7 @@ cd ../02.Spades
 polca.sh -a ../../05.Assemblies/02.Spades/scaffolds.fasta -r '../../02.CleanData/Cpalmiol_1_paired.fastq ../../02.CleanData/Cpalmiol_2_paired.fastq' -t 15 -m 1G
 
 # Cambie el nombre del nuevo genoma mejorado
-mv scaffolds.fasta.polished.fasta genome2_polished.fa
+mv scaffolds.fasta.PolcaCorrected.fa genome2_polished.fa
 
 ```
 
@@ -641,13 +643,13 @@ Consensus Quality: 99.9994
 `less scaffold.fasta.report`
 
 ```
-Substitution Errors: 
-Insertion/Deletion Errors: 
-Assembly Size: 
-Consensus Quality: 
+Substitution Errors: 57
+Insertion/Deletion Errors: 4
+Assembly Size: 17046023
+Consensus Quality: 99.9996
 ```
 
- Se puede observar que para el método de ensamblaje 1, fueron corregidos 31 errores de substitución, 56 de inserción o deleción y que la calidad consenso del genoma es 99.99%. En cuanto que para el método 2...
+Se puede observar que para el método de ensamblaje 1, fueron corregidos 31 errores de substitución, 56 de inserción o deleción y que la calidad consenso del genoma es 99.99%. En cuanto que para el método 2...
  
 ## 4. Calidad de los montajes
 
@@ -682,7 +684,7 @@ mkdir 07.AssemblyQuality
 mkdir 07.AssemblyQuality/01.Quast
 
 # Corra Quast
-quast.py 05.Assemblies/01.Canu/canu.contigs.fasta 05.Assemblies/02.Spades/scaffolds.fasta 06.Polishing/01.Canu/genome1_polished.fa 06.Polishing/02.Spades/genome2_polished.fa -o 07.AssemblyQuality/01.Quast
+quast.py 05.Assemblies/01.Canu/canu.contigs.fasta 05.Assemblies/02.Spades/scaffolds.fasta 06.Polishing/01.Canu/genome_polished.fa 06.Polishing/02.Spades/genome2_polished.fa -o 07.AssemblyQuality/01.Quast
 ```
 
 **Sintaxis**
@@ -698,7 +700,8 @@ Explore el directorio de output usando el comando `ls`.
 
 * `07.AssemblyQuality/01.Quast/report.html`: Este reporte puede ser abierto en un *web browser* y contiene las informaciones más relevantes. Como número de contigs, tamaño del mayor contig, tamaño total del montaje, N50, etc.
 
-<img src="imgs/report_quast.png" align="center" width = "100%"/>
+<img src="imgs/report_quast1.png" align="center" width = "100%"/>
+<img src="imgs/report_quast2.png" align="center" width = "100%"/>
 
 * `07.AssemblyQuality/01.Quast/report.tex`, `07.AssemblyQuality/01.Quast/report.txt`, `07.AssemblyQuality/01.Quast/report.tsv`, `07.AssemblyQuality/01.Quast/report.pdf`: es el mismo reporte pero en diferentes formatos. 
 
@@ -813,5 +816,179 @@ Rapidamente será generado un gráfico de barras con el porcentaje de cada tipo 
 
 <img src="imgs/busco_figure.png" align="center" width="85%"/>
 
+> ## Genoma final!
+> 
+> Según los resultados obtenidos de la evaluación de la calidad de los montajes, fue seleccionado el genoma montado por el programa Canu, y púlido por el programa Polca. Este genoma tiene 8 contigs, tiene una completeza de 99.6% y 0.4% de contaminación. El genoma se encuentra en el directorio `06.Polishing/01.Canu/genome_polished.fa`. Este genoma será usado para las siguientes etapas. 
+
+## 5. Predicción de genes
+
+La primera etapa después de obtener el mejor genoma montado es predecir los genes presentes. Para esto será usado el programa [**Augustus**](http://bioinf.uni-greifswald.de/augustus/). Ésta ferramenta tiene la información de los genes de [varias especies](http://bioinf.uni-greifswald.de/augustus/datasets/) de organismos que ayuda al algorítmo a encontrar las señales de ínicio y fin de cada gen. Sin embargo para el caso específico de *C. palmioleophila* no existe esta información. En este punto hay dos opciones, la primera, predecir los genes usando especies próximas disponibles en la base de datos de **Augustus** (*C. tropicalis, C. guillermondi, C. albicans*), la segunda opción es entrenar el programa para reconocer donde inician y finalizan los genes de la especie en estudio. Este proceso es complejo y envuelve varias etapas. Por esta razón en este tutorial será abordada solamente la primera opción. 
+
+### 5.1. Instalación
+
+[**Augustus**](https://github.com/Gaius-Augustus/Augustus) puede ser usado desde un [*web server*](http://bioinf.uni-greifswald.de/augustus/submission.php), o ser instalado usando Anaconda. 
+
+Para la instalación de esta herramienta, será creado un ambiente virtual, llamado **augustus**. 
+
+```
+# Cree el ambiente virtual
+conda create -n augustus
+
+# Instale Augustus
+
+conda install -c bioconda augustus
+```
+
+### 5.2. Uso
+
+Revise el [manual](https://github.com/Gaius-Augustus/Augustus/blob/master/docs/RUNNING-AUGUSTUS.md) de Augustus, pues éste programa tiene muchas opciones diferentes para rodar la predicción de los genes. A continuación será rodado el comando básico para esta etapa.
+
+```
+# Cree un directorio para el output
+mkdir 08.GenePrediction
+```
+**Augustus**
+
+```
+## Usando la informacion de C. Guilliermondi
+augustus --species=candida_guilliermondii --gff3=on --cds=on 06.Polishing/01.Canu/genome_polished.fa > 08.GenePrediction/C.tropicalis.GenePrediction.gff 
+```
+
+**Sintaxis**
+
+`augustus [parameters] --species=SPECIES queryfilename > output.gff`
+
+* parameters: Para conocer todos los parámetros customizables de augustus vea en el manual, en la sección [important parameters](https://github.com/Gaius-Augustus/Augustus/blob/master/docs/RUNNING-AUGUSTUS.md)
+
+* `--species`: Aqui indique la especie de la base de datos que será usada para ayudar al algorítmo a reconocer el incio y fin de los genes. 
+
+* `queryfilename`: Aqui coloque el camino para el archivo de las secuencias sobre las cuales será hecha la predicción de los genes, en este caso el genoma. 
+
+* `output.gff`: nombre del archivo de salida con extensión `.gff`. 
+
+**Formato `.gff` (Gene Feature Format)**
+
+Este formato guarda las informaciones de los genes predichos por Augustus. Explorelo (`less C.tropicalis.GenePrediction.gff`).
+
+Es una tabla separada por tabulaciones con las siguientes informaciones:
+
+1. **seqname**: nombre de la secuencia, en este caso nombre del contig. 
+2. **source**: nombre del programa que generó la predicción.
+3. **feature**: tipo de *feature*, p.e. gene, mRNA, variant, exon.
+4. **start**: primera posición de la *feature*
+5. **end**: útlima posición de la *feature*
+6. **score**: un punto
+7. **strand**: En que cadena del DNA fue encontrado la *feature*. La cadena *forward* es definida como '+', y la reverse como '-'.
+8. **frame**: 0 indica que la primera base de la *feature* es la primera base del codón de inicio, 1, significa que la segunda base de la *feature* es la primera base del codón ide inicio.
+9. **atribute**: información adicional sobre la *feature*. 
+* Por último, es posible encontrar la secuencia proteíca del gen. 
+
+**Ejercício:** Genere la predicción de genes usando las otras dos especies de *Candida* presentes en la base de datos de Augustus, y explore todos los archivos `.gff` generados.
+
+## 6. Anotación Funcional
+
+Después de conocer donde inician y finalizan los genes, ahora es posible "anotarlos" funcionalmente. Anotar, se refiere al proceso de alinear las secuencias de los genes contra diferentes bases de datos, con el objetivo de conocer cual es su función, es decir que hace cada gen. En esta etapa serán usadas varias bases de datos, como *UniProt*, *EggNOG*, *KEGG*. 
 
 
+### 6.1 Instalación
+
+Existen varios programas de alineamiento, entre ellos [**Blast+**](https://github.com/ncbi/blast_plus_docs) y [**Diamond**](https://github.com/bbuchfink/diamond), el cual será usado en este tutorial.
+
+[**Diamond**](https://github.com/bbuchfink/diamond/wiki/2.-Installation) será instalado usando conda dentro del ambiente virtual **mapping**. 
+
+```
+# Active el ambiente
+conda activate mapping
+
+# Instale Diamond
+conda install -c bioconda diamond
+```
+
+Antes de iniciar el proceso de anotación de los genes, es necesario extraer las secuencias proteícas de los archivos `.gff`. Para esta tarea será usado el programa [**GFFREAD**](https://github.com/gpertea/gffread). Es un programa especializado en la manipulación y gestión de archivos con extensión `.gff` y `.gtf`.
+
+**GFFREAD** será instalado en el ambiente virtual **bioinfo**.
+
+```
+# Active el ambiente bioinfo
+conda activate bioinfo
+
+# Instale GFFREAD
+conda install -c bioconda gffread
+```
+
+### 6.2. Uso
+
+### 6.2.1 Extracción de Secuencias
+
+Como fue mencionado antes, primero es necesario extraer las secuencias proteícas de los genes producto de la predicción de los genes y guardarlos en archivos formato `.fasta`
+
+A continuación se encuentra el comando de **GFFREAD** para extaer las secuencias desde los archivos `.gff`.
+
+```
+# Si no está activado
+conda activate bioinfo
+
+# GFFREAD
+gffread 08.GenePrediction/C.tropicalis.GenePrediction.gff -g 06.Polishing/01.Canu/genome_polished.fa -w 08.GenePrediction/c.tropicalis_anottation.fasta
+```
+
+**Sintaxis**
+
+`gffread file.gff -g genome.fa -w sequences.fasta`
+
+* `file.gff`: Aqui coloque el archivo `.gff` del cual desea extraer las secuencias. 
+
+* `-g`: aqui coloque el genoma desde el cual fue hecha la predicción de los genes. Los nombres de las secuencias (contigs) deben concordar con la primera columna del archivo `.gff`. 
+
+* `-w`: archivo de salida `.fasta`.
+
+**Ejercício:** Extraiga las secuencias de las predicciones de genes hechas con las otras especies relacionadas de *Candida*. 
+
+### 6.2.2. Bases de Datos
+
+Después de este proceso, ud debe tener tres archivos `.fasta` con las secuencias de los genes detectados por **Augustus** usando como base las especies de *Candida* disponibles en la base de datos. Ahora puede alinearlos con las bases de datos de interés. 
+
+En primer lugar será realizado la anotación usando **Diamond** contra la base de datos de **EggNOG**. Para descargar la base de datos será usado un script de Python del programa EggNOG, que será instalado usando Conda.
+
+```
+# Cree un directorio para colocar las bases de datos
+mkdir DataBases
+
+# Entre al directorio
+cd Databases/
+
+# Active el ambiente virutal mapping
+conda activate mapping
+
+# Instale EggNOG mapper
+conda install -c bioconda eggnog-mapper
+
+# Diamond
+download_eggnog_data.py --data_dir ./
+```
+
+Durante el proceso, será preguntado varias veces sobre si quiere descargar cada uno de los archivos, digite y. 
+
+
+
+
+
+
+
+
+
+
+RNA-seq
+
+00.RawData/03.RNA-seq
+
+CPR1_1.fastq.gz
+CPR1_2.fastq.gz
+
+Calidad
+
+conda activate quality
+
+fastqc -t 10 00.RawData/03.RNA-seq/* -o 01.FastqcReports
+
+nohup diamond blastx --more-sensitive --threads 10 -k 1 -f 6 qseqid qlen sseqid sallseqid slen qstart qend sstart send evalue bitscore score length pident qcovhsp --id 70 --query-cover 70 -d /home/bioinfo/Documentos/databases/uniref100.dmnd -q 06.Polishing/01.Canu/genome_polished.fa -o 08.GenePrediction/uniref.txt &
