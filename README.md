@@ -1099,8 +1099,8 @@ básico para esta etapa.
 
 **Augustus**
 
-    ## Usando la informacion de C. Guilliermondi
-    augustus --species=candida_guilliermondii --gff3=on --cds=on 06.Polishing/01.Canu/genome_polished.fa > 08.GenePrediction/C.tropicalis.GenePrediction.gff 
+    ## Usando la informacion de C. Tropicalis
+    augustus --species=candida_tropicalis --gff3=on --cds=on 06.Polishing/01.Canu/genome_polished.fa > 08.GenePrediction/C.tropicalis.GenePrediction.gff 
 
 **Sintaxis**
 
@@ -1155,21 +1155,7 @@ objetivo de conocer cual es su función, es decir que hace cada gen. En
 esta etapa serán usadas varias bases de datos, como *UniProt*, *EggNOG*,
 *KEGG*.
 
-### 6.1 Instalación
-
-Existen varios programas de alineamiento, entre ellos
-[**Blast+**](https://github.com/ncbi/blast_plus_docs) y
-[**Diamond**](https://github.com/bbuchfink/diamond), el cual será usado
-en este tutorial.
-
-[**Diamond**](https://github.com/bbuchfink/diamond/wiki/2.-Installation)
-será instalado usando conda dentro del ambiente virtual **mapping**.
-
-    # Active el ambiente
-    conda activate mapping
-
-    # Instale Diamond
-    conda install -c bioconda diamond
+### 6.1. Extracción de Secuencias
 
 Antes de iniciar el proceso de anotación de los genes, es necesario
 extraer las secuencias proteícas de los archivos `.gff`. Para esta tarea
@@ -1186,9 +1172,7 @@ especializado en la manipulación y gestión de archivos con extensión
     # Instale GFFREAD
     conda install -c bioconda gffread
 
-### 6.2. Uso
-
-### 6.2.1 Extracción de Secuencias
+### 6.1.1. Uso
 
 Como fue mencionado antes, primero es necesario extraer las secuencias
 proteícas de los genes producto de la predicción de los genes y
@@ -1201,7 +1185,7 @@ secuencias desde los archivos `.gff`.
     conda activate bioinfo
 
     # GFFREAD
-    gffread 08.GenePrediction/C.tropicalis.GenePrediction.gff -g 06.Polishing/01.Canu/genome_polished.fa -w 08.GenePrediction/c.tropicalis_anottation.fasta
+    gffread 08.GenePrediction/C.tropicalis.GenePrediction.gff -g 06.Polishing/01.Canu/genome_polished.fa -w 08.GenePrediction/c.tropicalis_prediction.fasta
 
 **Sintaxis**
 
@@ -1216,20 +1200,28 @@ secuencias desde los archivos `.gff`.
 
 -   `-w`: archivo de salida `.fasta`.
 
-**Ejercício:** Extraiga las secuencias de las predicciones de genes
-hechas con las otras especies relacionadas de *Candida*.
+**Ejercício 1**
 
-### 6.2.2. Bases de Datos
+Extraiga las secuencias de las predicciones de genes hechas con las
+otras especies relacionadas de *Candida*.
 
 Después de este proceso, ud debe tener tres archivos `.fasta` con las
 secuencias de los genes detectados por **Augustus** usando como base las
 especies de *Candida* disponibles en la base de datos. Ahora puede
 alinearlos con las bases de datos de interés.
 
-En primer lugar será realizado la anotación usando **Diamond** contra la
-base de datos de **EggNOG**. Para descargar la base de datos será usado
-un script de Python del programa EggNOG, que será instalado usando
-Conda.
+**Ejercício 2**
+
+Usando el comando `grep` cuente el número de secuencias/genes en cada
+archivo.
+
+### 6.2. Bases de Datos
+
+### 6.2.1. Obtención de las bases de datos
+
+**EggNOG** En primer lugar será realizado la anotación usando **Blast**
+contra la base de datos de **EggNOG**. Para descargar use el comando
+`wget`
 
     # Cree un directorio para colocar las bases de datos
     mkdir DataBases
@@ -1237,33 +1229,169 @@ Conda.
     # Entre al directorio
     cd Databases/
 
-    # Active el ambiente virutal mapping
+    # Descargue 
+    wget http://eggnog5.embl.de/download/eggnog_4.5/eggnog4.proteins.all.fa.gz
+
+    # Descomprima
+    gzip -d eggnog4.proteins.all.fa.gz
+
+**UniProtSwiss-Prot**
+
+[Swiss Prot](https://www.expasy.org/resources/uniprotkb-swiss-prot) es
+una base de datos con proteinas que su función ya fue establecida con
+experimentación.
+
+    # Entre al directorio DataBases
+    cd DataBases/
+
+    # Descargue SwissProt
+    wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz
+
+    # Descomprima
+    gzip -d uniprot_sprot.fasta
+
+**Bases de datos personalizadas**
+
+Una opción también es crear pequeñas bases de datos con secuencias de
+interes obtenidas del NCBI. Para esto solo es necesario organizar todas
+las secuencias dentro de un archivo `.fasta`.
+
+Para este tutorial tenemos dos bases de datos personalizadas, la primera
+es referente a secuencias de lipasas (`DataBases/lips_seqs.fa`) y la
+segunda a genes de virulencia (`DataBases/virulence_seqs.fa`).
+
+### 6.2.2. Instalación Alineador Blast
+
+Existen varios programas de alineamiento, los más conocidos son
+[**Blast+**](https://github.com/enormandeau/ncbi_blast_tutorial) y
+[**Diamond**](https://github.com/bbuchfink/diamond). Para este tutorial
+será usado **Blast+**, el cual será instalado usando conda dentro del
+ambiente virtual **mapping**.
+
+    # Active el ambiente
     conda activate mapping
 
-    # Instale EggNOG mapper
-    conda install -c bioconda eggnog-mapper
+    # Instale Blast
+    conda install -c bioconda blast
 
-    # Diamond
-    download_eggnog_data.py --data_dir ./
+### 6.2.3. Formatación de las bases de datos
 
-Durante el proceso, será preguntado varias veces sobre si quiere
-descargar cada uno de los archivos, digite y.
+Una vez escogido el alineador a ser usado, es necesario formatar las
+bases de datos para el software específico. Para formatar las bases en
+**Blast**, es usado el comando `makeblastdb`
 
-RNA-seq
+**EggNOG**
 
-00.RawData/03.RNA-seq
+    # Active el ambiente mapping
+    conda activate mapping
 
-CPR1\_1.fastq.gz CPR1\_2.fastq.gz
+    # formate la base de datos EggNOG
+    makeblastdb -in DataBases/eggnog4.proteins.all.fa  -title eggnog4 -dbtype prot -out DataBases/eggno4
 
-Calidad
+**Sintaxis**
+`makeblastdb -in reference.fasta -d ReferenceName -p threads`
 
-conda activate quality
+-   `makeblastdb`: nombre del comando para formatar las bases de datos
 
-fastqc -t 10 00.RawData/03.RNA-seq/\* -o 01.FastqcReports
+-   `-in`: base de datos en formato `.fasta` a ser formatada
 
-nohup diamond blastx –more-sensitive –threads 10 -k 1 -f 6 qseqid qlen
-sseqid sallseqid slen qstart qend sstart send evalue bitscore score
-length pident qcovhsp –id 70 –query-cover 70 -d
-/home/bioinfo/Documentos/databases/uniref100.dmnd -q
-06.Polishing/01.Canu/genome\_polished.fa -o 08.GenePrediction/uniref.txt
-&
+-   `-title`: nombre para la base de datos
+
+-   `-dbtype`: tipo de secuencias, prot, nucl
+
+-   `out`: Camino para los archivos de salida
+
+**Swiss-Prot**
+
+     makeblastdb -in DataBases/uniprot_sprot.fasta -title swissprot -dbtype prot -out DataBases/swissprot
+
+**Secuencias de Lipasas**
+
+    makeblastdb -in DataBases/lips_seqs.fa -title lips -dbtype nucl -out DataBases/lips
+
+**Secuencias Genes de virulencia**
+
+    makeblastdb -in DataBases/virulence_seqs.fa -title virulence -dbtype nucl -out DataBases/virulence
+
+### 6.2.3. Anotación
+
+Después de descargar y formatar las bases de datos es posible generar la
+anotación de los genes obtenidos en la predicción usando **Blast**.
+
+A continuación encuentrará la línea de comando, para la anotación con
+cada una de las bases de datos:
+
+**EGGNOGG**
+
+    # cree directorios para cada levadura usada como base
+    mkdir 09.GeneAnnotation/tropicalis
+    mkdir 09.GeneAnnotation/guilliermondii
+    mkdir 09.GeneAnnotation/albicans
+
+    # Blast
+    blastp -db DataBases/eggno4 -query 08.GenePrediction/c.tropicalis_prediction.fasta -num_threads 15 -evalue 1e-10 -word_size 11 -outfmt 6 > 09.GeneAnnotation/tropicalis/eggnog.txt
+
+**Swiss-Prot**
+
+    blastp -db DataBases/swissprot -query 08.GenePrediction/c.tropicalis_prediction.fasta -evalue 1e-10 -num_threads 15 -word_size 6 -outfmt 6 > 09.GeneAnnotation/tropicalis/swissprot.txt
+
+**Lipasas**
+
+    blastn -db DataBases/lips -query 08.GenePrediction/c.tropicalis_prediction.fasta -evalue 1e-10 -num_threads 15 -word_size 11 -outfmt 6 > 09.GeneAnnotation/tropicalis/lips.txt
+
+**Genes de virulencia**
+
+    blastn -db DataBases/virulence -query 08.GenePrediction/c.tropicalis_prediction.fasta -evalue 1e-10 -num_threads 15 -word_size 11 -outfmt 6 > 09.GeneAnnotation/tropicalis/virulence.txt
+
+**Colocando los *headers* de las tablas**
+
+Crie um arquivo de texto dentro da pasta `09.GeneAnnotation/` chamado
+`headers.txt`, use o editor de texto nano. Dentro del archivo copie los
+siguientes titulos de las columnas de las tablas generadas en la
+anotación por blast
+
+    qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore
+
+**Ejercicio 3**
+
+Usando `cat`, concatene el archivo `headers.txt` a cada uno de los
+archivos de texto de la anotación
+`eggnog.txt swissprot.txt lips.txt virulence.txt` y cree nuevos archivos
+con los títulos de las columnas (p.e.`eggnog_headers.txt`)
+
+**Ejercicio 4**
+
+Genere la anotación de las bases de datos personalizadas (lipasas y
+genes de virulencia) usando las otras predicciones realizadas con base a
+las otras especies de levaduras.
+
+**Output**
+
+-   **Columna 1 qseqid** Sequence id *query*
+-   **Columna 2 sseqid** Sequence id *subject*
+-   **Columna 3 pident** Porcentaje de identidad
+-   **Columna 4 length** Tamaño del alineamiento
+-   **Columna 5 mismatch** número of mismatches
+-   **Columna 6 gapopen** número de gaps
+-   **Columna 7 qstart** inicio del alineamiento en el *query*
+-   **Columna 8 qend** fin del alineamiento en el *query*
+-   **Columna 9 sstart** inicio del alineamiento en el *subject*
+-   **Columna 10 send** fin del alineamiento en el *subject*
+-   **Columna 11 evalue** value esperado
+-   **Columna 12 bitscore** *bit score*
+
+El *evalue* y el *bitscore* pueden ser entendidos en este
+[link](https://www.metagenomics.wiki/tools/blast/evalue).
+
+> ## Próximas etapas recomendadas
+>
+> -   Modificar parámetros en la predicción de genes
+> -   Modificar parámetros en la anotación de genes
+> -   Usar otras bases de datos (p.e. KEGG, InterPro, TIGRFAM, Pfam,
+>     UniProt)
+
+------------------------------------------------------------------------
+
+# Transcriptómica
+
+En construcción
