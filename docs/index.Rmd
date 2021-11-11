@@ -708,17 +708,17 @@ class: center, middle, inverse
   * Estudio de la expresión del genes de *C. palmiolephila* (Transcriptómica)
   
   
-* Ahora tienen un montón de información para analizar y sacar provecho! 
-* Aprendieron varias herramientas bioinformáticas
+* Ahora tienen un bastante de información para analizar y sacar provecho! 
+* Aprendieron varias herramientas bioinformáticas para análisis de genomas y transcriptomas
 
-### Les agradezco la oportunidad, porque aprendí mucho desde la preparación del contenido que les queria presentar, durante la ejecución y ahora espero que continuemos trabajando y generando conocimiento. 
+
 ---
 
 class: center, inverse
 
 ## Obrigado! 🇧🇷🇨🇴
 
-.center[<img src="imgs/grupo.png" width=80%>]
+.center[<img src="imgs/grupo.jpeg" width=100%>]
 .center[<img src="imgs/logos.png" width=70%>]
 
 

@@ -14,6 +14,8 @@ Pipeline para montaje y anotación funcional de genomas de levaduras.
 Ensamblaje de un genoma de levadura a partir de secuencias largas de
 PacBio y cortas de Illumina para corrección de errores.
 
+[**SLIDES**](https://khidalgo85.github.io/Genomica_Transcriptomica_Levadura)
+
 ## Herramientas bioinformáticas
 
 ### Instalación Anaconda
