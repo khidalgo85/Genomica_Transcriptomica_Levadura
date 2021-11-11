@@ -4,9 +4,9 @@
     <title>Colaboración Científica CIBAS/UDES - GEMM/UNICAMP</title>
     <meta charset="utf-8" />
     <meta name="author" content="Kelly Hidalgo" />
-    <meta name="date" content="2021-11-04" />
+    <meta name="date" content="2021-11-10" />
     <script src="index_files/header-attrs-2.9/header-attrs.js"></script>
-    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"f202bbf9205c4be5aa0005ec1074a1e0","expires":1}</script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"xed7b00d37b84607961792b0466ea3df","expires":1}</script>
     <script src="index_files/himalaya-1.1.0/himalaya.js"></script>
     <script src="index_files/js-cookie-3.0.0/js.cookie.js"></script>
     <link href="index_files/editable-0.2.6/editable.css" rel="stylesheet" />
@@ -36,7 +36,7 @@ class: center, middle, inverse, title-slide
 ## Pasantía en Bioinformática - Genómica de Levaduras
 ### Kelly Hidalgo
 ### Grupo de Ecologia Microbiana e Multi-ômicas
-### 2021-11-04
+### 2021-11-10
 
 ---
 
@@ -550,7 +550,7 @@ class: center, middle, inverse
 **Abordaje 2**
 * &lt;font size=2&gt;Estimación del tamaño del genoma: Jellyfish&lt;/font&gt;
 * &lt;font size=2&gt;Montaje del genoma: Canu&lt;/font&gt;
-* &lt;font size=2&gt;Montaje híbrido: Spades&lt;/font&gt;
+* &lt;font size=2&gt;Montaje: Spades&lt;/font&gt;
 * &lt;font size=2&gt;Evaluación de la calidad del raw assembly: Quast/BUSCO&lt;/font&gt;
 * &lt;font size=2&gt;Alineamiento short reads/ raw assembly: BWA&lt;/font&gt;
 * &lt;font size=2&gt;Polishing: Polca/MaSurCa tool kit&lt;/font&gt;
@@ -650,7 +650,7 @@ class: center, middle, inverse
 
 ## Transcriptómica 
 
-* Análisis del trasncriptoma = transcritos = mRNA
+* Análisis del trasncriptoma = transcriptos = mRNA
 * Genes expresos/activos al momento de la extracción
 * Principal uso: Análisis de la expresión diferencial (dos condiciones diferentes)
 
@@ -670,11 +670,10 @@ class: hide_logo
 
 * Análisis de la calidad de las secuencias (**FastQC**, PrinSEQ, **Trimmomatic**, Trimgalore)
 * Alineamiento de los *reads* en el genoma montado y anotado (STAR, **HISAT2**, TopHat2, Cufflinks)
-* Control de calidad RNA-seq (**RNA-SeqC**, **RSeqQC**, **Qualimap2**)
 * Ensamblaje del Transcriptoma (**StringTie**, Trinity, Cufflinks)
 * Cuantificación de la expresión (featureCounts, Cuffquant, HTSeq-count, **Kallisto**)
-* Expresión diferencial (DESeq2, edgeR, **Sleuth**, Ballgown)
-* Anotación: **Pannzer2**, **TopGo**, **EggNOG**.
+* Expresión diferencial (**DESeq2**, edgeR, **Sleuth**, Ballgown)
+* Anotación: **Blast+**, **EggNOG mapper**.
 
 ---
 class: hide_logo
@@ -684,9 +683,9 @@ class: hide_logo
 Para una correcta comparación de la expresión de los genes, es necesario **normalizar** los valores de los *counts* de cada gen. Existen varios tipos de métricas, todas intentan normalizar por la profundidad de la secuenciación y el tamaño de los genes
 
 
-* **RPKM:** Reads por millón de kilobases. Esta métrica primero cálcula un factor, llamado "per million", dividiendo el total de reads por un millón. Posteriormente, el conteo de cada en es dividido por este factor, lo cual normaliza los valores por la profucndidad de la seuenciación. Por último esos valores son divididos por el tamaño de cada gen en kilobases. **Solo para single-end**
+* **RPKM:** Reads por millón de kilobases. Esta métrica primero cálcula un factor, llamado "per million", dividiendo el total de reads por un millón. Posteriormente, el conteo de cada gen es dividido por este factor, lo cual normaliza los valores por la profundidad de la seuenciación. Por último esos valores son divididos por el tamaño de cada gen en kilobases. **Solo para single-end**
 * **FPKM:** Fragmentos por millon de kilobases. Debido a que RPKM es usado solo para bibliotecas *single-end*, fue diseñado el FPKM para *paired-end*. La única diferencia entre estas dos métricas es que el FPKM lleva e cuenta dos lecturas pueden mapear el mismo fragmento. 
-* **TPM:** Transcritos por millón. Para el cálculo de esta métrica, es neceario dividir el conteo de cada gen por el tamaño del gen en kilobases, dando como resultado las lecturas por kilosabes (RPK). Posteriormente los valores de RPK son todos sumados por muestra y divididos por un millón, obteniendo "per million" factor. Por último, se dividen los valores de RPK por el factor dando como resultado final el valor de TPM.
+* **TPM:** Transcriptos por millón. Para el cálculo de esta métrica, es neceario dividir el conteo de cada gen por el tamaño del gen en kilobases, dando como resultado las lecturas por kilosabes (RPK). Posteriormente los valores de RPK son todos sumados por muestra y divididos por un millón, obteniendo "per million" factor. Por último, se dividen los valores de RPK por el factor dando como resultado final el valor de TPM.
 
 &lt;font size=3&gt;**Estas métricas facilitan la comparación entre muestras, siendo TPM la más usada actualmente**&lt;/font&gt;
 
@@ -706,11 +705,10 @@ class: center, middle, inverse
 
 * Control de Calidad de las secuencias RNA-seq: FastQC, Trimmomatic
 * Alineamiento: HISAT2
-* Control de calidad RNA-seq: RNA-SeqC, RSeqQC, Qualimap2
-* Ensamblaje: Cufflinks
-* Cuantificación de la expresión: Cuffquant, Cufflinks
-* Expresión diferencial **Cuffdiff**
-* Anotación: Blast2Go, KEGG, EGGNOG
+* Ensamblaje: StringTie
+* Cuantificación de la expresión: Kallisto
+* Expresión diferencial: DESeq2
+* Anotación: Blast, EggNOG mapper
 
 [Tutorial](https://github.com/khidalgo85/Genomica_Transcriptomica_Levadura#readme)
 ---

@@ -1,0 +1,16 @@
+GeneID	gene	pident	length	mismatch	gapopen	qstart	qend	sstart	send	evalue	bitscore	Tipo
+cpalmiol.15.1	LipaseVII	100	1464	0	0	951	2414	1	1464	0	2704	target
+cpalmiol.16.1	LipaseVII	100	1464	0	0	951	2414	1	1464	0	2704	target
+cpalmiol.191.1	ACT1	100	1080	0	0	91	1170	1	1080	0	1995	housekeeping
+cpalmiol.506.1	LipaseIII	100	838	0	0	1330	2167	1	838	0	1548	target
+cpalmiol.519.1	LipaseIV	100	789	0	0	17983	18771	1	789	0	1458	target
+cpalmiol.535.1	PMA1	100	2700	0	0	334	3033	1	2700	0	4987	housekeeping
+cpalmiol.608.1	RPP2	82.707	133	14	4	218	350	124	1	6.67E-27	110	housekeeping
+cpalmiol.707.1	LipaseVI	100	1461	0	0	6646	8106	1	1461	0	2699	target
+cpalmiol.1017.1	RPP2	82.667	75	13	0	2	76	1	75	9.13E-14	67.6	housekeeping
+cpalmiol.1419.1	RIP	100	642	0	0	213	854	1	642	0	1186	housekeeping
+cpalmiol.1877.1	PMA1	92	50	4	0	10822	10871	870	821	8.92E-14	71.3	housekeeping
+cpalmiol.1955.1	RPP2	100	330	0	0	58	387	330	1	1.54E-177	610	housekeeping
+cpalmiol.1969.1	ARP5	100	2337	0	0	6053	8389	2337	1	0	4316	housekeeping
+cpalmiol.2232.1	RPP2	77.844	334	57	8	39	359	330	1	2.31E-51	191	housekeeping
+cpalmiol.2413.1	LSC2	100	945	0	0	338	1282	1	945	0	1746	housekeeping

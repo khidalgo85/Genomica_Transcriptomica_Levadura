@@ -35,6 +35,8 @@ presentados a medida que las herramientas van a ser usadas.
 
 ------------------------------------------------------------------------
 
+# I. Genómica
+
 ## 0. Organizando los datos
 
 ### 0.1. Secuencias
@@ -1152,8 +1154,8 @@ Después de conocer donde inician y finalizan los genes, ahora es posible
 “anotarlos” funcionalmente. Anotar, se refiere al proceso de alinear las
 secuencias de los genes contra diferentes bases de datos, con el
 objetivo de conocer cual es su función, es decir que hace cada gen. En
-esta etapa serán usadas varias bases de datos, como *UniProt*, *EggNOG*,
-*KEGG*.
+esta etapa serán usadas varias bases de datos, como *Swiss Prot* y
+*EggNOG*.
 
 ### 6.1. Extracción de Secuencias
 
@@ -1235,7 +1237,7 @@ contra la base de datos de **EggNOG**. Para descargar use el comando
     # Descomprima
     gzip -d eggnog4.proteins.all.fa.gz
 
-**UniProtSwiss-Prot**
+**Swiss-Prot**
 
 [Swiss Prot](https://www.expasy.org/resources/uniprotkb-swiss-prot) es
 una base de datos con proteinas que su función ya fue establecida con
@@ -1329,11 +1331,11 @@ cada una de las bases de datos:
     mkdir 09.GeneAnnotation/albicans
 
     # Blast
-    blastp -db DataBases/eggno4 -query 08.GenePrediction/c.tropicalis_prediction.fasta -num_threads 15 -evalue 1e-10 -word_size 11 -outfmt 6 > 09.GeneAnnotation/tropicalis/eggnog.txt
+    blastp -db DataBases/eggnog/eggno4 -query 08.GenePrediction/c.tropicalis_prediction.fasta -num_threads 5 -evalue 1e-3 -outfmt 6 > 09.GeneAnnotation/tropicalis/eggnog.txt
 
 **Swiss-Prot**
 
-    blastp -db DataBases/swissprot -query 08.GenePrediction/c.tropicalis_prediction.fasta -evalue 1e-10 -num_threads 15 -word_size 6 -outfmt 6 > 09.GeneAnnotation/tropicalis/swissprot.txt
+    blastp -db DataBases/swissprot -query 08.GenePrediction/c.tropicalis_prediction.fasta -evalue 1e-3 -num_threads 15  -outfmt 6 > 09.GeneAnnotation/tropicalis/swissprot.txt
 
 **Lipasas**
 
@@ -1345,12 +1347,12 @@ cada una de las bases de datos:
 
 **Colocando los *headers* de las tablas**
 
-Crie um arquivo de texto dentro da pasta `09.GeneAnnotation/` chamado
-`headers.txt`, use o editor de texto nano. Dentro del archivo copie los
-siguientes titulos de las columnas de las tablas generadas en la
-anotación por blast
+cree un archivo de texto dentro del directorio `09.GeneAnnotation/`
+llamado `headers.txt`, use el editor de texto `nano`. Dentro del archivo
+copie los siguientes títulos de las columnas de las tablas generadas en
+la anotación por blast
 
-    qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore
+    qseqid    sseqid    pident    length    mismatch    gapopen   qstart   qend    sstart    send    evalue    bitscore
 
 **Ejercicio 3**
 
@@ -1383,15 +1385,1354 @@ las otras especies de levaduras.
 El *evalue* y el *bitscore* pueden ser entendidos en este
 [link](https://www.metagenomics.wiki/tools/blast/evalue).
 
-> ## Próximas etapas recomendadas
+### 6.2.3.1 EggNOG Mapper
+
+El programa [EggNOG Mapper](https://github.com/eggnogdb/eggnog-mapper)
+tiene una plataforma [online](http://eggnog-mapper.embl.de/) que puede
+ser usada para anotar proteinas, genomas, genes y metagenomas, usando la
+base de datos EggNOG.
+
+<img src="imgs/eggnog.png" align="center" width ='100%' />
+
+Después de dar click en *Submit*, recibirá un correo con un link para
+dar ínicio al proceso. Y al finalizar recibirá otro correo avisando que
+su proceso está terminado, con un link que lo lleva para los resultados,
+los cuales puede explorar directamente ahí en la plataforma o descargar
+en diversos formatos (p.e. csv, excel, gff, etc)
+
+|                                                             |
+|-------------------------------------------------------------|
+| <img src="imgs/eggnog2.png" align="center" width ='100%' /> |
+
+> # <font color='blue'> Próximas etapas recomendadas</font>
 >
-> -   Modificar parámetros en la predicción de genes
-> -   Modificar parámetros en la anotación de genes
-> -   Usar otras bases de datos (p.e. KEGG, InterPro, TIGRFAM, Pfam,
->     UniProt)
+> -   <font color='blue'> Modificar parámetros en la predicción de
+>     genes</font>
+> -   <font color='blue'> Modificar parámetros en la anotación de
+>     genes</font>
+> -   <font color='blue'> Usar otras bases de datos (p.e. KEGG,
+>     InterPro, TIGRFAM, Pfam, UniProt)</font>
+> -   <font color='blue'> Use visualizadores de genomas (p.e. Artemis,
+>     IGV)</font>
 
-------------------------------------------------------------------------
+====================================================
 
-# Transcriptómica
+# II. Transcriptómica
 
-En construcción
+## 0. Organizando los datos
+
+### 0.1. Secuencias
+
+En este tutorial serán usados los datos de secuenciación del
+transcriptoma de la levadura *Candida palmioleophila*.
+
+**Archivos**
+
+-   `CPR1_1.fastq.gz`: Secuencias RNA-seq Illumina (pair 1)
+-   `CPR1_2.fastq.gz`: Secuencias RNA-seq Illumina (pair 2)
+
+Dentro del directorio `00.RawData/` cree una carpeta llama `03.RNA-seq/`
+para colocar las secuencias de RNA-seq.
+
+## 1. Control de Calidad
+
+## 1.1. Evaluación de la calidad
+
+Al igual que para las secuencias cortas del genoma,
+[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) será
+usado para la evaluación de la calidad.
+
+### 1.2. Uso
+
+Recordando que esta etapa es para identificar principalmente las
+secuencias *outlier* con baja calidad (*Q* &lt; 20).
+
+Usando el comando `conda`, active el ambiente `quality`:
+
+Debe estar em `~/cpalmiol/`. Si ese no es el resultado del comando
+`pwd`, use el comando `cd` para llegar en el directorio base.
+
+Corra **FastQC**:
+
+    ## Run usando 10 threads
+    fastqc -t 10 00.RawData/03.RNA-seq/* -o 01.FastqcReports/
+
+**Outputs**
+
+Descargue los archivos `html` y explore en su *web browser*.
+
+<img src="imgs/fastqcrna1.png" align="center"/>
+
+<img src="imgs/fastqcrna2.png" align="center"/>
+
+Este set de datos tiene son 35′115.119 secuencias paired end, el tamaño
+de las secuencias es de 101 bp. El gráfico de *Per base sequence
+quality*, está mostrando que las secuencias tienen excelente calidad y
+no tendrán que ser trimadas.
+
+## 2. Alineamiento a um genoma de referencia
+
+Después de la evaluación de la calidad y la depuración (cuando es
+necesario), se debe hacer un alineamiento o mapeo de las lecturas para
+determinar en qué parte del genoma o de dónde se originaron las
+lecturas. Hay una serie de herramientas que realizan esta función. En
+este tutorial usaremos
+[HISAT2](https://github.com/DaehwanKimLab/hisat2), pero también una
+herramienta como [STAR](https://github.com/alexdobin/STAR) o
+[TopHat2](https://github.com/infphilo/tophat), hace el trabajo.
+
+En este caso será usado el genoma montado en la primera parte del
+tutorial.
+
+### 2.1. Instalação
+
+La primera etapa del proceso con
+[HISAT2](https://daehwankimlab.github.io/hisat2/), es llamada de
+busqueda de semillas (*seeds*), y consiste en que para cada read el
+programa buscará la porción de la lectura más larga que coincida
+exactamente con una o más ubicaciones en el genoma de referencia
+(*seed1*). Posteriormente, volverá a buscar la parte no mapeada de la
+lectura para encontrar la siguiente secuencia más larga que coincida
+exactamente con el genoma de referencia (*seed2*). Y así hasta que
+encuentra las *seeds* de todas las lecturas. Esta forma de mapeo hace
+que el algorítmo sea eficiente y rápido. La segunda etapa, comprende la
+clusterización de *seeds* próximas, para generar una read completa.
+Después, el programa unirá las *seeds* baseado en el mejor alineamiento
+de las reads (*score* de *mismatches*, *indels*, *gaps*, etc)
+
+**HISAT2 v2.2.1** será instalado en el ambiente virutal **mapping**.
+
+    # Activa el ambiente
+    conda activate mapping
+
+    # Instala
+    conda install -c bioconda hisat2
+
+## 2.2. Uso
+
+El primer paso para el alineamiento es indexar el genoma. Cree un
+directorio para todo el proceso de mapeo (p.e. `10.Mapping.RNA`)
+
+    # Indexando
+    hisat2-build -p 10 06.Polishing/01.Canu/genome_polished.fa 10.Mapping.RNA/genome_polished
+
+**Sintaxis** `hisat2-build -p # [genome] [index]`
+
+-   `-p`: número de threads
+-   `[genome]`: Genoma de referencia
+-   `[index]`: índice
+
+**Mapeo**
+
+En la siguiente linea de código, hay dos comandos separados por `|`
+(*pipe*). Primero **HISAT2** va a hacer el alinemiento, el cual generará
+una serie de archivos `.sam` (*Sequence aligment Map*). En el segundo
+comando, **SamTools** transformará a archivos `.bam` (*Binary Alignment
+Map*), los cuales son una versión comprimida de `.sam`.
+
+    # Hisat
+    hisat2  -p 15 -x 10.Mapping.RNA/genome_polished -1 00.RawData/03.RNA-seq/CPR1_1.fastq.gz -2 00.RawData/03.RNA-seq/CPR1_2.fastq.gz | samtools view -Sb -o 10.Mapping.RNA/cpalmiol.bam
+
+    # Confirme
+    ll
+
+**Sintaxis** `hisat2 -p # -x index -U RNA-seqs`
+
+-   `-p`: Número de núcleos
+-   `-x`: índice
+-   `-1`: Secuencias RNA-seq pair 1
+-   `-2`: Secuencias RNA-seq pair 2
+
+\`samtools view -Sb -o file.bam\`\`
+
+-   `Sb`: input `.sam`, output `.bam`
+-   `-o`: nombre del archivo de salida
+
+### 2.2.1 Formato SAM/BAM
+
+Los archivos `.sam`, son archivos de texto organizados en tablas
+separadas por tabulaciones que contienen la información de cada *read* y
+su alineamiento con el genoma. Para más información, este
+[artículo](http://bioinformatics.oxfordjournals.org/content/25/16/2078.full)
+provee más detalles específicos de este formato.
+
+El archivo comienza con un título (opcional). El título es usado para
+describir la fuente de los datos, secuencia de referencia, método de
+alineamiento, etc., esto puede ser diferente dependiendo del alineador
+usado. En seguida, del título se encuentra la sección del alineamiento.
+Cada linea que sigue corresponde a la información del mapeo para cada
+*read*. Cada alineamiento tiene 11 campos obligatorios sobre información
+esencial, otras informaciones pueden aparecer dependiendo del alineador.
+
+<img src="imgs/samfile.png" align="center"/>
+
+A continuación algunos tag y su significado:
+
+<img src="imgs/tags.png" align="center"/>
+
+Para ver el archivo `.bam` no es posible simplemente usando `less` o
+`head` o `tail`. El conjunto de herramientas **SamTools** auxilia en esa
+y otras funciones más.
+
+Algunas de las funcionalidades de **SamTools**, se encuentran a
+continuación:
+
+-   `samtools view`: Con este comando es posible filtrar archivos `.sam`
+    o `.bam`. Así mismo puede usarse este comando para ver el contenido
+    de los archivos con estos formatos.
+
+-   `samtools sort`: ordena archivos `.bam` baseado en su posición en la
+    referencia, determinado por el alineamiento.
+
+-   `samtools index`: crea un nuevo índice de un `.bam` ordenado,
+    generando archivos `bam.bai`
+
+Observe el contenido del archivo `cpalmiol.bam` usando `samtools view`
+
+Comando
+
+    samtools view 10.Mapping.RNA/cpalmiol.bam | head
+
+Con el siguiente comando se pueden contar las secuencias que no fueron
+mapeados
+
+    samtools view -f 4 -c 10.Mapping.RNA/cpalmiol.bam
+
+Y los mapeados con:
+
+    samtools view -F 4 -c 10.Mapping.RNA/cpalmiol.bam
+
+## 2.3. Visualización archivos `.bam`
+
+Usando el programa
+[IGV](https://software.broadinstitute.org/software/igv/download) puede
+ser visualizado el archivo `10.Mapping.RNA/cpalmiol.bam`. Sin embargo,
+primero éste debe ser ordenado e indexado antes de subirlo al programa.
+
+    # Ordenando
+    samtools sort -o 10.Mapping.RNA/cpalmiol_sorted.bam 10.Mapping.RNA/cpalmiol.bam
+
+    # Indexando
+    samtools index 10.Mapping.RNA/cpalmiol_sorted.bam
+
+Descargue los archivos `.bam`, `.bam.bai`, y el genoma (`.fasta`) y
+ábralos en el programa.
+
+## 3. Montaje del transcriptoma
+
+El objetivo de esta etapa es el montaje del transcriptoma, usando los
+alineamientos del paso anterior. En este tutorial, usaremos
+[StringTie](https://ccb.jhu.edu/software/stringtie/), el cual emplea
+algoritmos eficientes para la recuperación de la estructura del
+trasncriptoma y la estimación de la abundancia a partir de lecturas de
+RNA-Seq alineadas con un genoma de referencia. Toma como entrada los
+alineamientos SAM/BAM, ordenados por coordenadas y produce una salida
+GTF que consiste en transcripciones ensambladas y sus niveles estimados
+(FPKM / TPM y valores de cobertura).
+
+    # Cree un directorio para el montaje
+    mkdir 11.AssemblyRNA
+
+    # Activa el ambiente assembly
+    conda activate assembly
+
+    # StringTie
+    stringtie -p 15 -o 11.AssemblyRNA/cpalmiol.gtf -l cpalmiol 10.Mapping.RNA/cpalmiol_sorted.bam
+
+**Sintaxis**
+`stringtie -p # -o output.gtf -l prefix [reads_alignments_sorted.bam]`
+
+-   `-p`: Número de núcleos
+-   `-o`: output en formato `.gtf`
+-   `-l`: Prefijo para los transcriptos
+-   `[sorted.bam]`: input alineamiento ordenado `.bam`
+
+El archivo de salida `.gtf` contiene las definiciones estrucurales de
+los transcriptos ensamblados por **StringTie** a partir de la
+información de mapeo.
+
+Use `less` para ver el contenido del archivo de salida
+`11.AssemblyRNA/cpalmiol.gtf`.
+
+### 3.1. Cuantificación de transcriptos
+
+Después de obtenidos los transcriptos, estos deben ser cuantificados. El
+programa que será usado en este tutorial, se llama
+[Kallisto](https://pachterlab.github.io/kallisto/). Este software
+cuantifica las abundancias de transcriptos. Se basa en la novedosa idea
+de pseudoalineación para determinar rápidamente la compatibilidad de
+lecturas con los *targets*, sin necesidad de alineación.
+
+### 3.1.1 Instalación
+
+Instale [Kallisto](https://pachterlab.github.io/kallisto/download) el
+ambiente **bioinfo**
+
+    # Activa el ambiente bioinfo
+    conda activate
+
+    # Instale Kallisto
+    conda install -c bioconda kallisto
+
+### 3.1.2. Uso
+
+Para cuantificar los transcriptos es necesario primero extraer las
+secuencias del archivo `.gtf`, usando **GFFREAD**. Recuerde que esta
+herramienta se encuentra instalada en el ambiente virutal **bioinfo**.
+
+Extrayendo las secuencias de los transciptos…
+
+    # Cree un directorio para el proceso de cuantificación
+    mkdir 12.TranscriptsQuantification
+
+    # GFFREAD
+    gffread 11.AssemblyRNA/cpalmiol.gtf -g 06.Polishing/01.Canu/genome_polished.fa -w 12.TranscriptsQuantification/cpalmiol.fasta
+
+**Kallisto**
+
+    # Indexando
+    kallisto index --index=12.TranscriptsQuantificationcpalmiol_index 12.TranscriptsQuantification/cpalmiol.fasta
+
+    # Cuantificando
+    kallisto quant --index=12.TranscriptsQuantificationcpalmiol_index --output-dir=12.TranscriptsQuantification --gtf 11.AssemblyRNA/cpalmiol.gtf 00.RawData/03.RNA-seq/CPR1_1.fastq.gz 00.RawData/03.RNA-seq/CPR1_2.fastq.gz  --threads=15
+
+## 4. Anotación
+
+Al igual que los genes, producto de la predicción realizada sobre el
+montaje del genoma, los transcriptos serán anotados. Ésta información,
+nos traera conocimiento sobre que genes estaban siendo expresos en el
+momento de la toma de la muestra, a diferencia de los genes en el genoma
+que dan información sobre el potencial funcional de la levadura.
+
+El proceso de anotación es el mismo que con los genes en el genoma.
+Usaremos **Blast+** (instalado en el ambiente **mapping**) para alinear
+los transcriptos contra las bases de datos **Swiss Prot** y las bases de
+datos personalizadas de **Lipasas** y **Genes asociados a virulencia**
+
+Cree un directorio para este proceso, llamado `13.AnnotationRNA/`
+
+**Swiss-Prot**
+
+    blastp -db DataBases/swissprot -query 12.TranscriptsQuantification/cpalmiol.fasta -evalue 1e-3 -num_threads 15  -outfmt 6 > 13.AnnotationRNA/swissprotRNA.txt
+
+**Lipasas**
+
+    blastn -db DataBases/lips -query 12.TranscriptsQuantification/cpalmiol.fasta -evalue 1e-10 -num_threads 15 -word_size 11 -outfmt 6 > 13.AnnotationRNA/lipsRNA.txt
+
+**Genes de virulencia**
+
+    blastn -db DataBases/virulence -query 12.TranscriptsQuantification/cpalmiol.fasta -evalue 1e-10 -num_threads 15 -word_size 11 -outfmt 6 > 13.AnnotationRNA/virulenceRNA.txt
+
+**Colocando los *headers* de las tablas**
+
+cree un archivo de texto dentro del directorio `09.GeneAnnotation/`
+llamado `headers.txt`, use el editor de texto `nano`. Dentro del archivo
+copie los siguientes títulos de las columnas de las tablas generadas en
+la anotación por blast
+
+    qseqid    sseqid    pident    length    mismatch    gapopen   qstart   qend    sstart    send    evalue    bitscore
+
+**Ejercicio 5**
+
+Usando `cat`, concatene el archivo `headers.txt` a cada uno de los
+archivos de texto de la anotación
+`swissprotRNA.txt lipsRNA.txt virulenceRNA.txt` y cree nuevos archivos
+con los títulos de las columnas (p.e.`swissprotRNA_headers.txt`)
+
+-   **Output**
+
+El *evalue* y el *bitscore* pueden ser entendidos en este
+[link](https://www.metagenomics.wiki/tools/blast/evalue).
+
+**Ejercício 6**
+
+Someta las secuencias de los transcriptos a **EggNOG mapper** para
+obtener la anotación con esta base de datos. Al terminar el proceso,
+descargue los datos en formato excel.
+
+## 5. Gráficos
+
+En esta sección serp´án construídos algunos gráficos muy simples, para
+observar la expresión de los genes de lipasas y virulencia. Para
+graficar será usado el lenguaje de programacion **R** y varias
+bibliotecas del mismo.
+
+``` r
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggrepel)
+
+counts <- read.delim("docs/abundance.tsv", header = T, 
+                     stringsAsFactors = F) %>% 
+  select(GeneID, tpm)
+
+lipasas <- read.delim("docs/lipsRNA_filter.txt", header = T, 
+                      stringsAsFactors = F)  
+
+df <- as.data.frame(left_join(lipasas, counts,
+                by= "GeneID") %>% 
+  rename(SeqID = GeneID)) 
+  
+  
+df %>% 
+  ggplot(aes(x=gene, y=log10(tpm))) +
+  geom_point(aes(size = length, color=SeqID, shape=Tipo)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  geom_text_repel(data = df, aes(label = evalue),
+                  size=2.5) +
+  ggtitle("Expresión de Lipasas")
+```
+
+<img src="imgs/unnamed-chunk-5-1.png" width="100%" />
+
+Los archivos `abundance.tsv`, y cada una de las tablas de las
+anotaciones pueden ser unidas, con el fin de obtener tablas con las dos
+principales informaciones, la cuantificación de la expresión en términos
+de **TPM** y la anotación funcional de cada transcripto. Este proceso
+puede ser ejecutado en Excel usando la función *buscarv* o en **R**
+usando la función `left_join()` de la librería *dplyr*.
+
+### Ejemplo com *dplyr*
+
+Tabla de abundancia obtenida con **Kallisto**
+
+``` r
+library(dplyr)
+counts <- read.delim("docs/abundance.tsv", header = T, 
+                     stringsAsFactors = F) %>% 
+  select(GeneID, tpm)
+```
+
+<table class=" lightable-paper lightable-hover" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+GeneID
+</th>
+<th style="text-align:right;">
+tpm
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cpalmiol.1.1
+</td>
+<td style="text-align:right;">
+1.54874
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.2.1
+</td>
+<td style="text-align:right;">
+15.26230
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.238.1
+</td>
+<td style="text-align:right;">
+2.65058
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.239.1
+</td>
+<td style="text-align:right;">
+4.23228
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.240.1
+</td>
+<td style="text-align:right;">
+78.94240
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.241.1
+</td>
+<td style="text-align:right;">
+7.62948
+</td>
+</tr>
+</tbody>
+</table>
+
+Tabla de anotación de lipasas obtenida con **Blast+**
+
+``` r
+library(dplyr)
+
+lipasas <- read.delim("docs/lipsRNA_filter.txt", header = T, 
+                      stringsAsFactors = F) 
+```
+
+<table class=" lightable-paper lightable-hover" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+GeneID
+</th>
+<th style="text-align:left;">
+gene
+</th>
+<th style="text-align:right;">
+pident
+</th>
+<th style="text-align:right;">
+length
+</th>
+<th style="text-align:right;">
+mismatch
+</th>
+<th style="text-align:right;">
+gapopen
+</th>
+<th style="text-align:right;">
+qstart
+</th>
+<th style="text-align:right;">
+qend
+</th>
+<th style="text-align:right;">
+sstart
+</th>
+<th style="text-align:right;">
+send
+</th>
+<th style="text-align:right;">
+evalue
+</th>
+<th style="text-align:right;">
+bitscore
+</th>
+<th style="text-align:left;">
+Tipo
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cpalmiol.15.1
+</td>
+<td style="text-align:left;">
+LipaseVII
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+951
+</td>
+<td style="text-align:right;">
+2414
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2704
+</td>
+<td style="text-align:left;">
+target
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.16.1
+</td>
+<td style="text-align:left;">
+LipaseVII
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+951
+</td>
+<td style="text-align:right;">
+2414
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2704
+</td>
+<td style="text-align:left;">
+target
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.191.1
+</td>
+<td style="text-align:left;">
+ACT1
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+1080
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+91
+</td>
+<td style="text-align:right;">
+1170
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1080
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1995
+</td>
+<td style="text-align:left;">
+housekeeping
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.506.1
+</td>
+<td style="text-align:left;">
+LipaseIII
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+838
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1330
+</td>
+<td style="text-align:right;">
+2167
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+838
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1548
+</td>
+<td style="text-align:left;">
+target
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.519.1
+</td>
+<td style="text-align:left;">
+LipaseIV
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+789
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+17983
+</td>
+<td style="text-align:right;">
+18771
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+789
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1458
+</td>
+<td style="text-align:left;">
+target
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.535.1
+</td>
+<td style="text-align:left;">
+PMA1
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+2700
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+334
+</td>
+<td style="text-align:right;">
+3033
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2700
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4987
+</td>
+<td style="text-align:left;">
+housekeeping
+</td>
+</tr>
+</tbody>
+</table>
+
+En el siguiente código, las tablas son unidas, por la columna en comun
+**GeneID**. En la nueva tabla solo estarán los valores de GeneID que
+están en común en ambas tablas (solo los genes de lipasas).
+
+``` r
+df <- as.data.frame(left_join(lipasas, counts,
+                by= "GeneID") %>% 
+  rename(SeqID = GeneID)) 
+```
+
+<table class=" lightable-paper lightable-hover" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+SeqID
+</th>
+<th style="text-align:left;">
+gene
+</th>
+<th style="text-align:right;">
+pident
+</th>
+<th style="text-align:right;">
+length
+</th>
+<th style="text-align:right;">
+mismatch
+</th>
+<th style="text-align:right;">
+gapopen
+</th>
+<th style="text-align:right;">
+qstart
+</th>
+<th style="text-align:right;">
+qend
+</th>
+<th style="text-align:right;">
+sstart
+</th>
+<th style="text-align:right;">
+send
+</th>
+<th style="text-align:right;">
+evalue
+</th>
+<th style="text-align:right;">
+bitscore
+</th>
+<th style="text-align:left;">
+Tipo
+</th>
+<th style="text-align:right;">
+tpm
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cpalmiol.15.1
+</td>
+<td style="text-align:left;">
+LipaseVII
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+951
+</td>
+<td style="text-align:right;">
+2414
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2704
+</td>
+<td style="text-align:left;">
+target
+</td>
+<td style="text-align:right;">
+10.85960
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.16.1
+</td>
+<td style="text-align:left;">
+LipaseVII
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+951
+</td>
+<td style="text-align:right;">
+2414
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2704
+</td>
+<td style="text-align:left;">
+target
+</td>
+<td style="text-align:right;">
+7.99862
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.191.1
+</td>
+<td style="text-align:left;">
+ACT1
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+1080
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+91
+</td>
+<td style="text-align:right;">
+1170
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1080
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1995
+</td>
+<td style="text-align:left;">
+housekeeping
+</td>
+<td style="text-align:right;">
+611.87400
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.506.1
+</td>
+<td style="text-align:left;">
+LipaseIII
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+838
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1330
+</td>
+<td style="text-align:right;">
+2167
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+838
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1548
+</td>
+<td style="text-align:left;">
+target
+</td>
+<td style="text-align:right;">
+1.73960
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.519.1
+</td>
+<td style="text-align:left;">
+LipaseIV
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+789
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+17983
+</td>
+<td style="text-align:right;">
+18771
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+789
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1458
+</td>
+<td style="text-align:left;">
+target
+</td>
+<td style="text-align:right;">
+17.09370
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cpalmiol.535.1
+</td>
+<td style="text-align:left;">
+PMA1
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+2700
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+334
+</td>
+<td style="text-align:right;">
+3033
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2700
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4987
+</td>
+<td style="text-align:left;">
+housekeeping
+</td>
+<td style="text-align:right;">
+961.89500
+</td>
+</tr>
+</tbody>
+</table>
+
+***Nota**: Antes de usar la tabla de las anotaciones es necesario
+filtrarla, escogiendo el mejor *hit\* por transcripto. Es decir, al
+final debe tener un gen por cada transcripto.
+
+====================================================
+
+# III Referencias bibliográficas
+
+-   Andrews, S. (2017). FastQC: a quality control tool for high
+    throughput sequence data. 2010
+
+-   [SequelTools: a suite of tools for working with PacBio Sequel raw
+    sequence
+    data](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03751-8)
+    (Hufnagel, D. E., Hufford, M. B., & Seetharam, A. S. (2020).
+    SequelTools: a suite of tools for working with PacBio Sequel raw
+    sequence data. BMC bioinformatics, 21(1), 1-11.)
+
+-   [Trimmomatic: a flexible trimmer for Illumina sequence
+    data](https://academic.oup.com/bioinformatics/article-abstract/30/15/2114/2390096)(Trimmomatic:
+    a flexible trimmer for Illumina sequence data)
+
+-   [A fast, lock-free approach for efficient parallel counting of
+    occurrences of
+    k-mers](https://academic.oup.com/bioinformatics/article-abstract/27/6/764/234905)(Marçais,
+    G., & Kingsford, C. (2011). A fast, lock-free approach for efficient
+    parallel counting of occurrences of k-mers. Bioinformatics, 27(6),
+    764-770.)
+
+-   [GenomeScope: fast reference-free genome profiling from short
+    reads](https://academic.oup.com/bioinformatics/article-abstract/33/14/2202/3089939)(Vurture, G.
+    W., Sedlazeck, F. J., Nattestad, M., Underwood, C. J., Fang, H.,
+    Gurtowski, J., & Schatz, M. C. (2017). GenomeScope: fast
+    reference-free genome profiling from short reads. Bioinformatics,
+    33(14), 2202-2204.)
+
+-   [BEDTools: a flexible suite of utilities for comparing genomic
+    features](https://academic.oup.com/bioinformatics/article-abstract/26/6/841/244688)(Quinlan, A.
+    R., & Hall, I. M. (2010). BEDTools: a flexible suite of utilities
+    for comparing genomic features. Bioinformatics, 26(6), 841-842.)
+
+-   [Canu: scalable and accurate long-read assembly via adaptive k-mer
+    weighting and repeat
+    separation](https://genome.cshlp.org/content/27/5/722.short)(Koren,
+    S., Walenz, B. P., Berlin, K., Miller, J. R., Bergman, N. H., &
+    Phillippy, A. M. (2017). Canu: scalable and accurate long-read
+    assembly via adaptive k-mer weighting and repeat separation. Genome
+    research, 27(5), 722-736.)
+
+-   [SPAdes: a new genome assembly algorithm and its applications to
+    single-cell
+    sequencing](https://www.liebertpub.com/doi/full/10.1089/cmb.2012.0021)(Bankevich,
+    A., Nurk, S., Antipov, D., Gurevich, A. A., Dvorkin, M., Kulikov, A.
+    S., … & Pevzner, P. A. (2012). SPAdes: a new genome assembly
+    algorithm and its applications to single-cell sequencing. Journal of
+    computational biology, 19(5), 455-477.)
+
+-   [The genome polishing tool POLCA makes fast and accurate corrections
+    in genome
+    assemblies](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007981)(Zimin, A.
+    V., & Salzberg, S. L. (2020). The genome polishing tool POLCA makes
+    fast and accurate corrections in genome assemblies. PLoS
+    computational biology, 16(6), e1007981.)
+
+-   [QUAST: quality assessment tool for genome
+    assemblies](https://academic.oup.com/bioinformatics/article-abstract/29/8/1072/228832)(Gurevich,
+    A., Saveliev, V., Vyahhi, N., & Tesler, G. (2013). QUAST: quality
+    assessment tool for genome assemblies. Bioinformatics, 29(8),
+    1072-1075.)
+
+-   [BUSCO: assessing genome assembly and annotation completeness with
+    single-copy
+    orthologs](https://academic.oup.com/bioinformatics/article-abstract/31/19/3210/211866)(Simão, F.
+    A., Waterhouse, R. M., Ioannidis, P., Kriventseva, E. V., &
+    Zdobnov, E. M. (2015). BUSCO: assessing genome assembly and
+    annotation completeness with single-copy orthologs. Bioinformatics,
+    31(19), 3210-3212.)
+
+-   [AUGUSTUS: ab initio prediction of alternative
+    transcripts](https://academic.oup.com/nar/article-abstract/34/suppl_2/W435/2505582)(Stanke,
+    M., Keller, O., Gunduz, I., Hayes, A., Waack, S., & Morgenstern, B.
+    (2006). AUGUSTUS: ab initio prediction of alternative transcripts.
+    Nucleic acids research, 34(suppl\_2), W435-W439.)
+
+-   [AUGUSTUS: a web server for gene prediction in eukaryotes that
+    allows user-defined
+    constraints](https://academic.oup.com/nar/article-abstract/33/suppl_2/W465/2505649)(Stanke,
+    M., & Morgenstern, B. (2005). AUGUSTUS: a web server for gene
+    prediction in eukaryotes that allows user-defined constraints.
+    Nucleic acids research, 33(suppl\_2), W465-W467.)
+
+-   [GFF utilities: GffRead and
+    GffCompare](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7222033.2/)(Pertea,
+    G., & Pertea, M. (2020). GFF utilities: GffRead and GffCompare.
+    F1000Research, 9.)
+
+-   [eggNOG: automated construction and annotation of orthologous groups
+    of
+    genes](https://academic.oup.com/nar/article-abstract/36/suppl_1/D250/2506468)(Jensen, L.
+    J., Julien, P., Kuhn, M., von Mering, C., Muller, J., Doerks, T., &
+    Bork, P. (2007). eggNOG: automated construction and annotation of
+    orthologous groups of genes. Nucleic acids research, 36(suppl\_1),
+    D250-D254.)
+
+-   [Uniprotkb/swiss-prot](https://link.springer.com/content/pdf/10.1007/978-1-59745-535-0_4.pdf)(Boutet,
+    E., Lieberherr, D., Tognolli, M., Schneider, M., & Bairoch, A.
+    (2007). Uniprotkb/swiss-prot. In Plant bioinformatics (pp. 89-112).
+    Humana Press.)
+
+-   [BLAST+: architecture and
+    applications](https://link.springer.com/article/10.1186/1471-2105-10-421)(Camacho,
+    C., Coulouris, G., Avagyan, V., Ma, N., Papadopoulos, J., Bealer,
+    K., & Madden, T. L. (2009). BLAST+: architecture and applications.
+    BMC bioinformatics, 10(1), 1-9.)
+
+-   [Fast and sensitive protein alignment using
+    DIAMOND](https://www.nature.com/articles/nmeth.3176)(Buchfink, B.,
+    Xie, C., & Huson, D. H. (2015). Fast and sensitive protein alignment
+    using DIAMOND. Nature methods, 12(1), 59-60.)
+
+-   [Fast genome-wide functional annotation through orthology assignment
+    by
+    eggNOG-mapper](https://academic.oup.com/mbe/article-abstract/34/8/2115/3782716)(Huerta-Cepas,
+    J., Forslund, K., Coelho, L. P., Szklarczyk, D., Jensen, L. J., Von
+    Mering, C., & Bork, P. (2017). Fast genome-wide functional
+    annotation through orthology assignment by eggNOG-mapper. Molecular
+    biology and evolution, 34(8), 2115-2122.)
+
+-   [Graph-based genome alignment and genotyping with HISAT2 and
+    HISAT-genotype](https://www.nature.com/articles/s41587-019-0201-4)(Kim,
+    D., Paggi, J. M., Park, C., Bennett, C., & Salzberg, S. L. (2019).
+    Graph-based genome alignment and genotyping with HISAT2 and
+    HISAT-genotype. Nature biotechnology, 37(8), 907-915.)
+
+-   [STAR: ultrafast universal RNA-seq
+    aligner](https://academic.oup.com/bioinformatics/article-abstract/29/1/15/272537)(Dobin,
+    A., Davis, C. A., Schlesinger, F., Drenkow, J., Zaleski, C., Jha,
+    S., … & Gingeras, T. R. (2013). STAR: ultrafast universal RNA-seq
+    aligner. Bioinformatics, 29(1), 15-21.)
+
+-   [The sequence alignment/map format and
+    SAMtools](https://academic.oup.com/bioinformatics/article-abstract/25/16/2078/204688)(Li,
+    H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., …
+    & Durbin, R. (2009). The sequence alignment/map format and SAMtools.
+    Bioinformatics, 25(16), 2078-2079.)
+
+-   [StringTie enables improved reconstruction of a transcriptome from
+    RNA-seq reads](https://www.nature.com/articles/nbt.3122)(Pertea, M.,
+    Pertea, G. M., Antonescu, C. M., Chang, T. C., Mendell, J. T., &
+    Salzberg, S. L. (2015). StringTie enables improved reconstruction of
+    a transcriptome from RNA-seq reads. Nature biotechnology, 33(3),
+    290-295.)
+
+-   [kallisto: A command-line interface to simplify computational
+    modelling and the generation of atomic
+    features](https://joss.theoj.org/papers/10.21105/joss.03050.pdf)(Caldeweyher, E.
+    (2021). kallisto: A command-line interface to simplify computational
+    modelling and the generation of atomic features. Journal of Open
+    Source Software, 6(60), 3050.)
+
+-   [United States Department of Energy Systems Biology
+    Knowledgebase](https://www.nature.com/articles/nbt.4163)(Arkin AP,
+    Cottingham RW, Henry CS, Harris NL, Stevens RL, Maslov S, et
+    al. KBase: The United States Department of Energy Systems Biology
+    Knowledgebase. Nature Biotechnology. 2018;36: 566. doi:
+    10.1038/nbt.4163)
+
+-   [KEGG Mapper for inferring cellular functions from protein
+    sequences](https://onlinelibrary.wiley.com/doi/abs/10.1002/pro.3711)(Kanehisa,
+    M., & Sato, Y. (2020). KEGG Mapper for inferring cellular functions
+    from protein sequences. Protein Science, 29(1), 28-35.)
+
+-   [iPath: interactive exploration of biochemical pathways and
+    networks](https://www.sciencedirect.com/science/article/pii/S0968000408000236)(Letunic,
+    I., Yamada, T., Kanehisa, M., & Bork, P. (2008). iPath: interactive
+    exploration of biochemical pathways and networks. Trends in
+    biochemical sciences, 33(3), 101-103.)
+
+-   [A beginner’s guide to eukaryotic genome
+    annotation](https://www.nature.com/articles/nrg3174)(Yandell, M., &
+    Ence, D. (2012). A beginner’s guide to eukaryotic genome annotation.
+    Nature Reviews Genetics, 13(5), 329-342.)
+
+====================================================
+
+# BONUS Plataformas online para bioinformática
+
+Existen diversas plataformas online que permiten realizar todos los
+procesos aprendidos en este tutorial, usando servidores públicos y
+interfaces gráficas.
+
+### [Galaxy](https://usegalaxy.org/)
+
+Es una plataforma con diversas herramientas para diferentes procesos. La
+mayoria que fueron usadas en este tutorial se encuentran en Galaxy.
+
+<img src="imgs/galaxy.png" align="center"/>
+
+**HELP** Click en el símbolo del birrete, en la parte superior.
+Encontrará diversos tutoriales con videos.
+
+### [KBase](https://www.kbase.us/)
+
+Es una plataforma con diversas herramientas para diferentes procesos. La
+mayoria que fueron usadas en este tutorial se encuentran en KBase.
+
+<img src="imgs/kbase.png" align="center"/>
+
+[**HELP**](https://www.kbase.us/learn/)
+
+### [Augustus](http://bioinf.uni-greifswald.de/augustus/submission.php)
+
+Plataforma online para predecir genes de eucariotos.
+
+<img src="imgs/augustus.png" align="center"/>
+
+### [KofamKOALA](https://www.genome.jp/tools/kofamkoala/)
+
+Plataforma para anotar baseado en el algorítmo HMMER. También existen
+otras plataformas baseadas en otros algorítmos, como
+[BlastKOALA](https://www.kegg.jp/blastkoala),
+[GhostKOALA](https://www.kegg.jp/ghostkoala).
+
+<img src="imgs/koala.png" align="center"/>
+
+### [IPATH3](https://pathways.embl.de/)
+
+Herramienta online para visualización y análisis de mapas metabólicos.
+
+<img src="imgs/ipath.png" align="center"/>
+
+[**Videos de ayuda**](https://pathways.embl.de/video_tutorial.cgi)
+[**Páginas de ayuda**](https://pathways.embl.de/help.cgi)
+
+====================================================
+
+## Trobleshooting
+
+Dudas, ayuda, consejos…
+
+Kelly Hidalgo Martinez 📧 <khidalgo@javeriana.edu.co>
