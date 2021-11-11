@@ -1130,7 +1130,7 @@ Después de dar click en *Submit*, recibirá un correo con un link para dar íni
 > * <font color='blue'> Usar otras bases de datos (p.e. KEGG, InterPro, TIGRFAM, Pfam, UniProt)</font>
 > * <font color='blue'> Use visualizadores de genomas (p.e. Artemis, IGV)</font>
 
-====================================================
+---
 
 # II. Transcriptómica
 
@@ -1504,7 +1504,7 @@ df %>%
 
 ***Nota**: Antes de usar la tabla de las anotaciones es necesario filtrarla, escogiendo el mejor *hit* por transcripto. Es decir, al final debe tener un gen por cada transcripto.
 
-====================================================
+---
 
 # III Referencias bibliográficas
 
@@ -1565,7 +1565,7 @@ df %>%
 
 * [A beginner's guide to eukaryotic genome annotation](https://www.nature.com/articles/nrg3174)(Yandell, M., & Ence, D. (2012). A beginner's guide to eukaryotic genome annotation. Nature Reviews Genetics, 13(5), 329-342.)
 
-====================================================
+---
 
 # BONUS Plataformas online para bioinformática
 
@@ -1591,7 +1591,7 @@ Es una plataforma con diversas herramientas para diferentes procesos. La mayoria
 
 Plataforma online para predecir genes de eucariotos.
 
-<img src="imgs/augustus.png" align="center"/>
+<img src="imgs/Augustus.png" align="center"/>
 
 ### [KofamKOALA](https://www.genome.jp/tools/kofamkoala/)
 
@@ -1611,7 +1611,7 @@ Herramienta online para visualización y análisis de mapas metabólicos.
 
 
 
-====================================================
+---
 
 ## Trobleshooting
 

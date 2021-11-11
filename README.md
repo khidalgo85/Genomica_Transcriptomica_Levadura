@@ -1417,7 +1417,7 @@ en diversos formatos (p.e. csv, excel, gff, etc)
 > -   <font color='blue'> Use visualizadores de genomas (p.e. Artemis,
 >     IGV)</font>
 
-====================================================
+------------------------------------------------------------------------
 
 # II. Transcriptómica
 
@@ -2501,7 +2501,7 @@ housekeeping
 filtrarla, escogiendo el mejor *hit\* por transcripto. Es decir, al
 final debe tener un gen por cada transcripto.
 
-====================================================
+------------------------------------------------------------------------
 
 # III Referencias bibliográficas
 
@@ -2680,7 +2680,7 @@ final debe tener un gen por cada transcripto.
     Ence, D. (2012). A beginner’s guide to eukaryotic genome annotation.
     Nature Reviews Genetics, 13(5), 329-342.)
 
-====================================================
+------------------------------------------------------------------------
 
 # BONUS Plataformas online para bioinformática
 
@@ -2711,7 +2711,7 @@ mayoria que fueron usadas en este tutorial se encuentran en KBase.
 
 Plataforma online para predecir genes de eucariotos.
 
-<img src="imgs/augustus.png" align="center"/>
+<img src="imgs/Augustus.png" align="center"/>
 
 ### [KofamKOALA](https://www.genome.jp/tools/kofamkoala/)
 
@@ -2731,7 +2731,7 @@ Herramienta online para visualización y análisis de mapas metabólicos.
 [**Videos de ayuda**](https://pathways.embl.de/video_tutorial.cgi)
 [**Páginas de ayuda**](https://pathways.embl.de/help.cgi)
 
-====================================================
+------------------------------------------------------------------------
 
 ## Trobleshooting
 
