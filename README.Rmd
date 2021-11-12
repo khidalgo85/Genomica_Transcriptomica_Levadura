@@ -1360,11 +1360,16 @@ gffread 11.AssemblyRNA/cpalmiol.gtf -g 06.Polishing/01.Canu/genome_polished.fa -
 
 ```
 # Indexando
-kallisto index --index=12.TranscriptsQuantificationcpalmiol_index 12.TranscriptsQuantification/cpalmiol.fasta
+kallisto index --index=12.TranscriptsQuantification/cpalmiol_index 12.TranscriptsQuantification/cpalmiol.fasta
 
 # Cuantificando
-kallisto quant --index=12.TranscriptsQuantificationcpalmiol_index --output-dir=12.TranscriptsQuantification --gtf 11.AssemblyRNA/cpalmiol.gtf 00.RawData/03.RNA-seq/CPR1_1.fastq.gz 00.RawData/03.RNA-seq/CPR1_2.fastq.gz  --threads=15
+kallisto quant --index=12.TranscriptsQuantification/cpalmiol_index --output-dir=12.TranscriptsQuantification --gtf 11.AssemblyRNA/cpalmiol.gtf 00.RawData/03.RNA-seq/CPR1_1.fastq.gz 00.RawData/03.RNA-seq/CPR1_2.fastq.gz  --threads=15
 ```
+ El archivo de salida de **Kallisto** es una tabla llamada `abundance.tsv` con el ID de cada transcrito y el valor de **TPM** para cada uno de ellos, además del tamaño de cada uno. 
+ 
+Use `less` para ver el contenido de la tabla `abundance.tsv` que se encuentra dentro de la carpeta `12.TranscriptQuantification/`.
+
+
 ## 4. Anotación
 
 Al igual que los genes, producto de la predicción realizada sobre el montaje del genoma, los transcriptos serán anotados. Ésta información, nos traera conocimiento sobre que genes estaban siendo expresos en el momento de la toma de la muestra, a diferencia de los genes en el genoma que dan información sobre el potencial funcional de la levadura. 
@@ -1504,6 +1509,52 @@ df %>%
 
 ***Nota**: Antes de usar la tabla de las anotaciones es necesario filtrarla, escogiendo el mejor *hit* por transcripto. Es decir, al final debe tener un gen por cada transcripto.
 
+## 6. Archivos finales
+
+Al finalizar todo el tutorial ud tendrá los siguientes archivos:
+
+* Secuencias originales: 
+  * DNA PacBio `00.RawData/01.PacBio/`
+  * DNA Illumina `00.RawData/02.Illumina`
+  * RNA Illumina `00.RawData/03.RNA-seq/`
+* Secuencias DepuradasÑ
+  * DNA Illumina `02.CleanData/`
+* Reportes de Calidad FASTQC
+  * DNA Illumina `01.FastqcReports/`
+  * RNA Illumina `01.FastqcReports/`
+* Genoma Montado
+  * Genoma final `06.Polishing/01.Canu`
+* Predicción de Genes
+  * Usando como base *C. tropicalis* `08.GenePrediction/C.tropicalis.GenePrediction.gff`
+  * Usando como base *C. Guilliermondii* `08.GenePrediction/C.guilliermondii.GenePrediction.gff`
+  * Usando como base *C. albicans* `08.GenePrediction/C.albicans.GenePrediction.gff`
+* Secuencias CDS (genes)
+  * *C. tropicalis* `08.GenePrediction/c.tropicalis_prediction.fasta`
+  * *C. guilliermondii* `08.GenePrediction/c.guilliermondii_prediction.fasta`
+  * *C. albicans* `08.GenePrediction/c.albicans_prediction.fasta`
+* Anotación de Genes
+  * Usando la predicción de *C. tropicalis*
+    * SwissProt `09.GeneAnnotation/tropicalis/swissprot_headers.txt`
+    * Lipasas `09.GeneAnnotation/tropicalis/lips_headers.txt`
+    * Genes Virulencia `09.GeneAnnotation/tropicalis/virulence_headers.txt`
+    * EggNOG Mapper
+    `09.GeneAnnotation/tropicalis/eggnog.xlsx`
+* Mapeo del RNA
+  * Alineamiento `.bam` `10.Mapping.RNA/cpalmiol.bam`
+  * Ordenado `10.Mapping.RNA/cpalmiol_sorted.bam`
+  * Indexado `10.Mapping.RNA/cpalmiol_sorted.bam.bai`
+* Transcriptos `11.AssemblyRNA/cpalmiol.gtf`
+* Cuantificación de Transcriptos `12.TranscriptsQuantification/cpalmiol.gtf`
+* Anotación de transcriptos
+  * EggNog `13.AnnotationRNA/eggnogRNA.xlsx`
+  * SwissProt `13.AnnotationRNA/swissprotRNA_headers.txt`
+  * Lipasas `13.AnnotationRNA/lipsRNA_headers.txt`
+  * Genes de Virulencia
+  `13.AnnotationRNA/virulenceRNA_headers.txt`
+* Gráficos
+  * Expresión Lipasas `14.Graphs/lipasas.png`
+  * Expresión de Genes de Virulencia `14.Graphs/virulence.png`
+  
 ---
 
 # III Referencias bibliográficas
